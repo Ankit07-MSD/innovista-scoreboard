@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INNOVISTA Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="title">INNOVISTA<span>ADMIN PANEL</span></div>
+
+  <div id="matchNotice"></div>
+
+  <div class="addTeam">
+    <input id="newTeamName" placeholder="Team name">
+    <button id="addBtn">Add Team</button>
+    <button id="endMatchBtn" style="border-color:var(--gold);color:var(--gold)">End Match →Next</button>
+  </div>
+
+  <div id="teams"></div>
+
+  <div class="ppPanel">
+    <h3>PLACEMENT POINTS (by finishing position)</h3>
+    <div id="ppInputs"></div>
+  </div>
+
+  <a class="publicLink" href="/" target="_blank">Open Public Display →</a>
+  <a class="publicLink" href="/standings" target="_blank" style="margin-left:16px">Open Overall Points Table →</a>
+  <div id="status" class="statusMsg"></div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
