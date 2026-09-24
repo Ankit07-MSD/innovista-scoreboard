@@ -1,0 +1,62 @@
+{
+  "teams": [
+    {
+      "id": "t17902239517359oup",
+      "name": "A",
+      "alive": 2,
+      "kills": 0,
+      "eliminated": false,
+      "position": null,
+      "isWinner": false,
+      "cumPoints": 27,
+      "cumKills": 1,
+      "boyahs": 0,
+      "matches": 3
+    },
+    {
+      "id": "t17902239545150nk5",
+      "name": "B",
+      "alive": 0,
+      "kills": 0,
+      "eliminated": true,
+      "position": 3,
+      "isWinner": false,
+      "cumPoints": 20,
+      "cumKills": 4,
+      "boyahs": 0,
+      "matches": 3
+    },
+    {
+      "id": "t1790223957591pzz3",
+      "name": "C",
+      "alive": 4,
+      "kills": 0,
+      "eliminated": false,
+      "position": null,
+      "isWinner": false,
+      "cumPoints": 41,
+      "cumKills": 5,
+      "boyahs": 3,
+      "matches": 3
+    }
+  ],
+  "placementPoints": [
+    12,
+    9,
+    8,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1,
+    0,
+    0
+  ],
+  "lastElim": {
+    "name": "B",
+    "position": 3,
+    "ts": 1790224053932
+  }
+}

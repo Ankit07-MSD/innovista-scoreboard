@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INNOVISTA Points Table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .pt-row{display:grid;grid-template-columns:48px 1fr 80px 80px 70px 110px 90px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);}
+  .pt-row.head{background:#0a1a2c;color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;}
+  .pt-row:last-child{border-bottom:none;}
+  .pt-row .c{text-align:center;}
+  .pt-row .c.team{text-align:left;font-weight:600;font-size:16px;}
+  .pt-row .c.pts{color:var(--cyan);font-family:'Orbitron',sans-serif;font-weight:700;}
+  .pt-row:nth-child(2) .c.rank{color:var(--gold);text-shadow:0 0 10px rgba(255,210,87,.7);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">INNOVISTA<span>OVERALL POINTS TABLE</span></div>
+  <div class="table" id="table"></div>
+  <div class="credit">
+    <span>Powered by</span>
+    <img src="assets/hld-esports-logo.png" alt="HLD ESPORTS">
+    <strong>HLD ESPORTS</strong>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="standings.js"></script>
+</body>
+</html>
