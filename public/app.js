@@ -124,26 +124,11 @@ function spawnConfetti(container, count) {
   }
 }
 
-function characterHtml(className) {
-  return `
-    <div class="ff-character ${className}">
-      <div class="char-aura"></div>
-      <div class="char-head"></div>
-      <div class="char-visor"></div>
-      <div class="char-torso"></div>
-      <div class="char-arm arm-l"></div>
-      <div class="char-arm arm-r"></div>
-      <div class="char-leg leg-l"></div>
-      <div class="char-leg leg-r"></div>
-      <div class="char-weapon"></div>
-    </div>
-  `;
-}
-
-function showBooyah(teamName, winnerId) {
+function showBooyah(teamName, winnerId, totalPoints) {
   if (activeBooyahOverlay && document.body.contains(activeBooyahOverlay)) {
     activeBooyahOverlay.dataset.winnerId = winnerId;
     activeBooyahOverlay.querySelector('.booyah-team').textContent = teamName;
+    activeBooyahOverlay.querySelector('.winner-total strong').textContent = totalPoints;
     return;
   }
 
@@ -157,6 +142,8 @@ function showBooyah(teamName, winnerId) {
   overlay.dataset.winnerId = winnerId;
   overlay.innerHTML = `
     <div class="booyah-bg-grid"></div>
+    <div class="poster-ribbon ribbon-left">HLD ESPORTS</div>
+    <div class="poster-ribbon ribbon-right">BOOYAH SERIES</div>
     <div class="booyah-stack">
       <span>BOOYAH</span>
       <span>BOOYAH</span>
@@ -164,13 +151,11 @@ function showBooyah(teamName, winnerId) {
     </div>
     <div class="booyah-main">BOOYAH!</div>
     <div class="character-line" aria-hidden="true">
-      ${characterHtml('c1')}
-      ${characterHtml('c2')}
-      ${characterHtml('c3')}
-      ${characterHtml('c4')}
+      <img class="booyah-squad" src="assets/booyah-squad.svg" alt="">
     </div>
     <div class="winner-plate">
-      <div class="winner-tag">MATCH WINNER</div>
+      <div class="winner-logo"><img src="assets/hld-esports-logo.png" alt=""></div>
+      <div class="winner-total">TOTAL POINTS : <strong>${totalPoints}</strong></div>
       <div class="booyah-team">${esc(teamName)}</div>
     </div>
   `;
@@ -197,9 +182,9 @@ function checkWinner() {
   if (winner) {
     if (winnerShownFor !== winner.id || !activeBooyahOverlay) {
       winnerShownFor = winner.id;
-      showBooyah(winner.name, winner.id);
+      showBooyah(winner.name, winner.id, winner.total);
     } else {
-      showBooyah(winner.name, winner.id);
+      showBooyah(winner.name, winner.id, winner.total);
     }
     return;
   }
