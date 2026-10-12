@@ -19,29 +19,45 @@ body::before{z-index:0;
   background-size:cover, 220px 220px, auto, auto, auto;
   background-position:center, -120px 20px, center, center, center;
   background-repeat:no-repeat, repeat, no-repeat, no-repeat, no-repeat;
-  animation:hldArena 26s linear infinite;}
+  transform-origin:center;
+  animation:hldArena 7.5s linear infinite, bgZoomTilt 2.35s ease-in-out infinite alternate;}
 body::after{z-index:0;opacity:.72;
   background:
-    repeating-linear-gradient(115deg, transparent 0 28px, rgba(255,221,122,.13) 29px 30px, transparent 31px 72px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px),
-    linear-gradient(90deg, transparent, rgba(255,210,87,.16), transparent);
-  background-size:220px 220px, 100% 5px, 160% 100%;
-  mix-blend-mode:screen;animation:bgDrift 16s linear infinite, scanMove 4.2s linear infinite, bgBlink 2.8s steps(2,end) infinite;}
+    repeating-linear-gradient(115deg, transparent 0 24px, rgba(255,221,122,.16) 25px 27px, transparent 28px 62px),
+    repeating-linear-gradient(60deg, transparent 0 18px, rgba(255,48,24,.16) 19px 21px, transparent 22px 58px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 5px),
+    linear-gradient(90deg, transparent 0 18%, rgba(255,210,87,.22) 34%, transparent 50%, rgba(22,241,255,.12) 66%, transparent 82%);
+  background-size:190px 190px, 260px 260px, 100% 5px, 150% 100%;
+  mix-blend-mode:screen;animation:bgDrift 4.8s linear infinite, scanMove 1.15s linear infinite, bgBlink 1.35s steps(2,end) infinite;}
 @keyframes bgPulse{from{filter:saturate(1) brightness(.92);}to{filter:saturate(1.28) brightness(1.08);}}
 @keyframes hldArena{
-  0%{background-position:center,-140px 20px,center,center,center;filter:saturate(1.06) brightness(1);}
-  35%{background-position:center,40px -30px,center,center,center;filter:saturate(1.25) brightness(1.08);}
-  70%{background-position:center,190px 40px,center,center,center;filter:saturate(1.16) brightness(1.03);}
-  100%{background-position:center,300px 20px,center,center,center;filter:saturate(1.06) brightness(1);}
+  0%{background-position:center,-160px 20px,18% 18%,84% 74%,center;filter:saturate(1.08) brightness(.98);}
+  24%{background-position:center,35px -55px,28% 12%,78% 68%,center;filter:saturate(1.42) brightness(1.18);}
+  50%{background-position:center,220px 24px,10% 26%,90% 58%,center;filter:saturate(1.24) brightness(1.04);}
+  74%{background-position:center,60px 100px,24% 34%,76% 84%,center;filter:saturate(1.5) brightness(1.16);}
+  100%{background-position:center,400px 20px,18% 18%,84% 74%,center;filter:saturate(1.08) brightness(.98);}
 }
-@keyframes bgDrift{to{background-position:440px -220px,0 70px,220% 0;}}
-@keyframes scanMove{50%{opacity:.92;}}
-@keyframes bgBlink{0%,82%,100%{filter:brightness(1);}86%{filter:brightness(1.45) saturate(1.35);}90%{filter:brightness(.78);}}
+@keyframes bgZoomTilt{
+  0%{transform:scale(1) rotate(-.35deg);}
+  45%{transform:scale(1.055) rotate(.45deg);}
+  100%{transform:scale(1.025) rotate(-.2deg);}
+}
+@keyframes bgDrift{to{background-position:380px -190px,-320px 220px,0 54px,220% 0;}}
+@keyframes scanMove{0%,100%{opacity:.52;}50%{opacity:.95;}}
+@keyframes bgBlink{
+  0%,48%,58%,100%{filter:brightness(1) contrast(1);}
+  50%{filter:brightness(1.65) saturate(1.55) contrast(1.14);}
+  53%{filter:brightness(.76) saturate(1.1) contrast(1.2);}
+  72%{filter:brightness(1.32) saturate(1.35);}
+}
 .wrap,.admin-wrap{position:relative;z-index:1;}
 .wrap::before{content:'';position:fixed;inset:-28vmax;z-index:-1;pointer-events:none;
-  background:conic-gradient(from 0deg, transparent, rgba(255,210,87,.08), transparent 18%, rgba(255,0,0,.1), transparent 36%);
-  animation:arenaRotate 28s linear infinite;mix-blend-mode:screen;}
-@keyframes arenaRotate{to{transform:rotate(360deg);}}
+  background:
+    conic-gradient(from 0deg, transparent, rgba(255,210,87,.16), transparent 13%, rgba(255,0,0,.18), transparent 28%, rgba(22,241,255,.1), transparent 43%),
+    repeating-conic-gradient(from 8deg, transparent 0 8deg, rgba(255,255,255,.035) 9deg 10deg, transparent 11deg 22deg);
+  animation:arenaRotate 5.6s linear infinite, arenaFlash 1.8s ease-in-out infinite;mix-blend-mode:screen;}
+@keyframes arenaRotate{to{transform:rotate(360deg) scale(1.08);}}
+@keyframes arenaFlash{50%{opacity:.86;filter:brightness(1.45);}72%{opacity:.42;filter:brightness(.8);}}
 .wrap{max-width:900px;margin:0 auto;padding:28px 16px 48px;}
 .title{text-align:center;font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(22px,5vw,38px);
   letter-spacing:4px;color:#fff;text-shadow:0 0 10px rgba(255,106,26,.9),0 0 28px rgba(255,210,87,.55),0 0 46px rgba(255,0,0,.3);
