@@ -1,6 +1,8 @@
 const socket = io();
 let state = null;
 let winnerShownFor = null;
+let activeBooyahOverlay = null;
+let booyahConfettiTimer = null;
 const previousRanks = new Map();
 const previousTotals = new Map();
 
@@ -118,10 +120,33 @@ function spawnConfetti(container, count) {
     p.style.animationDuration = (2.4 + Math.random() * 1.6) + 's';
     p.style.transform = `rotate(${Math.random() * 360}deg)`;
     container.appendChild(p);
+    setTimeout(() => p.remove(), 4700);
   }
 }
 
-function showBooyah(teamName) {
+function characterHtml(className) {
+  return `
+    <div class="ff-character ${className}">
+      <div class="char-aura"></div>
+      <div class="char-head"></div>
+      <div class="char-visor"></div>
+      <div class="char-torso"></div>
+      <div class="char-arm arm-l"></div>
+      <div class="char-arm arm-r"></div>
+      <div class="char-leg leg-l"></div>
+      <div class="char-leg leg-r"></div>
+      <div class="char-weapon"></div>
+    </div>
+  `;
+}
+
+function showBooyah(teamName, winnerId) {
+  if (activeBooyahOverlay && document.body.contains(activeBooyahOverlay)) {
+    activeBooyahOverlay.dataset.winnerId = winnerId;
+    activeBooyahOverlay.querySelector('.booyah-team').textContent = teamName;
+    return;
+  }
+
   const flash = document.createElement('div');
   flash.className = 'booyah-flash';
   document.body.appendChild(flash);
@@ -129,6 +154,7 @@ function showBooyah(teamName) {
 
   const overlay = document.createElement('div');
   overlay.className = 'booyah-overlay';
+  overlay.dataset.winnerId = winnerId;
   overlay.innerHTML = `
     <div class="booyah-bg-grid"></div>
     <div class="booyah-stack">
@@ -138,10 +164,10 @@ function showBooyah(teamName) {
     </div>
     <div class="booyah-main">BOOYAH!</div>
     <div class="character-line" aria-hidden="true">
-      <div class="ff-character c1"><span></span></div>
-      <div class="ff-character c2"><span></span></div>
-      <div class="ff-character c3"><span></span></div>
-      <div class="ff-character c4"><span></span></div>
+      ${characterHtml('c1')}
+      ${characterHtml('c2')}
+      ${characterHtml('c3')}
+      ${characterHtml('c4')}
     </div>
     <div class="winner-plate">
       <div class="winner-tag">MATCH WINNER</div>
@@ -149,18 +175,38 @@ function showBooyah(teamName) {
     </div>
   `;
   document.body.appendChild(overlay);
+  activeBooyahOverlay = overlay;
   spawnConfetti(overlay, 130);
-  setTimeout(() => overlay.classList.add('fadeOut'), 6800);
-  setTimeout(() => overlay.remove(), 7600);
+  booyahConfettiTimer = setInterval(() => spawnConfetti(overlay, 46), 2600);
+}
+
+function hideBooyah() {
+  if (booyahConfettiTimer) {
+    clearInterval(booyahConfettiTimer);
+    booyahConfettiTimer = null;
+  }
+  if (!activeBooyahOverlay) return;
+  const overlay = activeBooyahOverlay;
+  activeBooyahOverlay = null;
+  overlay.classList.add('fadeOut');
+  setTimeout(() => overlay.remove(), 800);
 }
 
 function checkWinner() {
   const winner = state.teams.find(t => t.isWinner);
-  if (winner && winnerShownFor !== winner.id) {
-    winnerShownFor = winner.id;
-    showBooyah(winner.name);
+  if (winner) {
+    if (winnerShownFor !== winner.id || !activeBooyahOverlay) {
+      winnerShownFor = winner.id;
+      showBooyah(winner.name, winner.id);
+    } else {
+      showBooyah(winner.name, winner.id);
+    }
+    return;
   }
-  if (!winner) winnerShownFor = null; // so the next win in a new match can trigger again
+  if (winnerShownFor || activeBooyahOverlay) {
+    winnerShownFor = null;
+    hideBooyah();
+  }
 }
 
 socket.on('state', (s) => {
