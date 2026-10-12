@@ -19,7 +19,6 @@ function renderMatchMeta() {
   const stage = (state.stageName || 'League Stage').toUpperCase();
   const group = (state.groupName || 'Group A').toUpperCase();
   el.innerHTML = `
-    <div class="poster-present">HLD ESPORTS PRESENTS</div>
     <div class="poster-stage">${esc(stage)}</div>
     <div class="poster-group">${esc(group)}</div>
     <div class="poster-mode">LIVE STANDINGS</div>
@@ -131,12 +130,23 @@ function showBooyah(teamName) {
   const overlay = document.createElement('div');
   overlay.className = 'booyah-overlay';
   overlay.innerHTML = `
-    <div class="rays"></div>
-    <div class="booyah-banner">
-      <div class="booyah-title">BOOYAH</div>
-      <div class="booyah-sub">FLAWLESS VICTORY</div>
+    <div class="booyah-bg-grid"></div>
+    <div class="booyah-stack">
+      <span>BOOYAH</span>
+      <span>BOOYAH</span>
+      <span>BOOYAH</span>
     </div>
-    <div class="booyah-team">${esc(teamName)} WINS THE MATCH</div>
+    <div class="booyah-main">BOOYAH!</div>
+    <div class="character-line" aria-hidden="true">
+      <div class="ff-character c1"><span></span></div>
+      <div class="ff-character c2"><span></span></div>
+      <div class="ff-character c3"><span></span></div>
+      <div class="ff-character c4"><span></span></div>
+    </div>
+    <div class="winner-plate">
+      <div class="winner-tag">MATCH WINNER</div>
+      <div class="booyah-team">${esc(teamName)}</div>
+    </div>
   `;
   document.body.appendChild(overlay);
   spawnConfetti(overlay, 130);

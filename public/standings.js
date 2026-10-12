@@ -11,7 +11,6 @@ function renderMatchMeta(state) {
   const stage = (state.stageName || 'League Stage').toUpperCase();
   const group = (state.groupName || 'Group A').toUpperCase();
   el.innerHTML = `
-    <div class="poster-present">HLD ESPORTS PRESENTS</div>
     <div class="poster-stage">${esc(stage)}</div>
     <div class="poster-group">${esc(group)}</div>
     <div class="poster-mode">OVERALL STANDINGS</div>
