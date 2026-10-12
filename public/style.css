@@ -164,11 +164,6 @@ body::after{z-index:0;opacity:.72;
 .booyah-bg-grid::after{content:'';position:absolute;inset:0;background:url("assets/hld-esports-logo.png") center/240px repeat;opacity:.11;animation:booyahLogoSpin 18s linear infinite;}
 @keyframes booyahGrid{to{background-position:260px -120px,240px 0,80px 0,0 80px;}}
 @keyframes booyahLogoSpin{50%{filter:brightness(1.8);opacity:.2;}to{transform:rotate(360deg);}}
-.poster-ribbon{position:absolute;z-index:7;width:360px;height:42px;display:grid;place-items:center;
-  background:linear-gradient(90deg,#fff48a,#ff7a00);color:#1d0700;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;letter-spacing:5px;
-  box-shadow:0 0 24px rgba(255,210,87,.35);opacity:.92;}
-.ribbon-left{left:-104px;top:38px;transform:rotate(-66deg);}
-.ribbon-right{right:-112px;bottom:98px;transform:rotate(-44deg);}
 .booyah-stack{position:absolute;left:5vw;top:6vh;z-index:2;display:grid;gap:4px;font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(28px,5vw,64px);line-height:.9;letter-spacing:4px;opacity:.46;}
 .booyah-stack span{color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.85);opacity:0;animation:booyahEcho 5.4s ease infinite;}
 .booyah-stack span:nth-child(2){color:#fff;-webkit-text-stroke:0;animation-delay:.18s;}
@@ -193,16 +188,11 @@ body::after{z-index:0;opacity:.72;
 @keyframes squadRise{from{opacity:0;transform:translateY(85px) scale(.88) rotateX(9deg);filter:blur(5px) drop-shadow(0 24px 20px rgba(0,0,0,.5));}to{opacity:1;transform:translateY(0) scale(1) rotateX(0);}}
 @keyframes squadFloat{50%{transform:translateY(-10px) scale(1.018);filter:drop-shadow(0 34px 24px rgba(0,0,0,.68)) drop-shadow(0 0 34px rgba(255,210,87,.32)) brightness(1.08);}}
 @keyframes squadAura{50%{opacity:.74;filter:blur(24px) brightness(1.35);}}
-.winner-plate{position:absolute;left:50%;bottom:56px;z-index:6;width:min(92vw,1120px);min-height:128px;padding:20px 24px 20px;display:grid;grid-template-columns:150px 1fr;align-items:center;gap:28px;transform:translateX(-50%);
+.winner-plate{position:absolute;left:50%;bottom:56px;z-index:6;width:min(92vw,1120px);min-height:128px;padding:20px 42px;display:grid;place-items:center;transform:translateX(-50%);
   background:linear-gradient(100deg,#fa0b05,#d90000 58%,#7b0000);border-left:12px solid var(--cream);box-shadow:0 0 32px rgba(255,0,0,.55),0 0 54px rgba(255,210,87,.2);
   animation:plateIn .65s cubic-bezier(.16,1.45,.3,1) .78s both;}
 .winner-plate::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent,rgba(255,255,255,.14),transparent);transform:translateX(-120%);animation:plateShine 2.8s ease-in-out infinite 1s;}
-.winner-logo{width:132px;aspect-ratio:1.45;display:grid;place-items:center;background:linear-gradient(135deg,#fffbd1,#ffd257);box-shadow:0 0 22px rgba(255,210,87,.34);z-index:1;}
-.winner-logo img{width:76px;height:76px;object-fit:cover;border-radius:10px;box-shadow:0 0 18px rgba(160,0,0,.45);}
-.winner-total{position:absolute;right:128px;top:-48px;z-index:2;padding:10px 22px;background:linear-gradient(90deg,#fffbc1,#ffd257);color:#160500;
-  font-family:'Orbitron',sans-serif;font-size:clamp(14px,2vw,22px);font-weight:900;letter-spacing:1px;box-shadow:0 0 20px rgba(255,210,87,.4);}
-.winner-total strong{font-size:1.6em;margin-left:10px;}
-.booyah-team{position:relative;z-index:1;font-family:'Orbitron',sans-serif;font-size:clamp(34px,6.2vw,78px);font-weight:900;letter-spacing:4px;color:#fff;text-align:left;text-shadow:0 5px 0 rgba(0,0,0,.34);line-height:1;}
+.booyah-team{position:relative;z-index:1;font-family:'Orbitron',sans-serif;font-size:clamp(42px,7.4vw,96px);font-weight:900;letter-spacing:5px;color:#fff;text-align:center;text-shadow:0 5px 0 rgba(0,0,0,.34);line-height:1;}
 @keyframes plateIn{from{opacity:0;transform:translateX(-160%);}to{opacity:1;transform:translateX(-50%);}}
 @keyframes plateShine{0%,45%{transform:translateX(-120%);}100%{transform:translateX(120%);}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
