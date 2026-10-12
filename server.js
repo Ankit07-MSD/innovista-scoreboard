@@ -30,7 +30,8 @@ function defaultState() {
     placementPoints: defaultPlacementPoints(12),
     lastElim: null,
     stageName: 'League Stage',
-    groupName: 'Group A'
+    groupName: 'Group A',
+    qualifyCount: 0
   };
 }
 
@@ -40,7 +41,9 @@ if (fs.existsSync(STATE_FILE)) {
 }
 state.stageName = state.stageName || 'League Stage';
 state.groupName = state.groupName || 'Group A';
+state.qualifyCount = Math.max(0, parseInt(state.qualifyCount, 10) || 0);
 state.placementPoints = state.placementPoints || defaultPlacementPoints(Math.max(12, state.teams.length));
+state.teams.forEach(t => { t.championRush = Boolean(t.championRush); });
 function saveState() {
   fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
   fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
@@ -119,7 +122,7 @@ function handleAction(action, payload) {
         id: 't' + Date.now() + Math.random().toString(36).slice(2, 6),
         name, alive: 4, kills: 0, eliminated: false, position: null, isWinner: false,
         // cumulative tournament-wide stats, carried across matches
-        cumPoints: 0, cumKills: 0, boyahs: 0, matches: 0
+        cumPoints: 0, cumKills: 0, boyahs: 0, matches: 0, championRush: false
       });
       while (state.placementPoints.length < state.teams.length) state.placementPoints.push(1);
       break;
@@ -135,6 +138,12 @@ function handleAction(action, payload) {
     case 'updateMatchMeta': {
       state.stageName = String(payload.stageName || '').trim() || 'League Stage';
       state.groupName = String(payload.groupName || '').trim() || 'Group A';
+      state.qualifyCount = Math.max(0, parseInt(payload.qualifyCount, 10) || 0);
+      break;
+    }
+    case 'toggleChampionRush': {
+      const t = findTeam(payload.id);
+      if (t) t.championRush = Boolean(payload.value);
       break;
     }
     case 'adjustAlive': {

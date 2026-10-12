@@ -43,6 +43,7 @@ function render() {
   document.getElementById('adminKey').placeholder = adminKey ? 'Saved in this browser' : 'admin123';
   setInputValue('stageName', state.stageName || 'League Stage');
   setInputValue('groupName', state.groupName || 'Group A');
+  setInputValue('qualifyCount', state.qualifyCount || 0);
 
   const winner = state.teams.find(t => t.isWinner);
   const noticeEl = document.getElementById('matchNotice');
@@ -66,6 +67,7 @@ function render() {
       <span>Pos: ${t.position || '-'}</span>
       <span style="color:var(--cyan);font-weight:700">Pts: ${t.total}</span>
       <span style="color:var(--muted);font-size:12px">(M:${t.matches||0} · 🏆${t.boyahs||0})</span>
+      <button data-act="rush" data-id="${t.id}" data-value="${t.championRush ? '0' : '1'}" class="${t.championRush ? 'rush-on' : ''}">Champion Rush</button>
       ${t.eliminated
         ? `<button data-act="undo" data-id="${t.id}">Undo</button>`
         : `<button data-act="elim" data-id="${t.id}" style="border-color:var(--orange);color:var(--orange)">Eliminate</button>`}
@@ -93,6 +95,7 @@ function render() {
       else if (act === 'kill+') sendAction('addKill', { id, delta: 1 });
       else if (act === 'elim') sendAction('eliminate', { id });
       else if (act === 'undo') sendAction('undoElim', { id });
+      else if (act === 'rush') sendAction('toggleChampionRush', { id, value: btn.dataset.value === '1' });
       else if (act === 'remove') sendAction('removeTeam', { id });
     };
   });
@@ -109,7 +112,8 @@ document.getElementById('endMatchBtn').onclick = () => {
 document.getElementById('saveMetaBtn').onclick = () => {
   sendAction('updateMatchMeta', {
     stageName: document.getElementById('stageName').value,
-    groupName: document.getElementById('groupName').value
+    groupName: document.getElementById('groupName').value,
+    qualifyCount: document.getElementById('qualifyCount').value
   });
 };
 document.getElementById('adminKey').addEventListener('change', (event) => {
@@ -118,7 +122,7 @@ document.getElementById('adminKey').addEventListener('change', (event) => {
   event.target.value = '';
   event.target.placeholder = adminKey ? 'Saved in this browser' : 'admin123';
 });
-['stageName', 'groupName'].forEach(id => {
+['stageName', 'groupName', 'qualifyCount'].forEach(id => {
   document.getElementById(id).addEventListener('keydown', (event) => {
     if (event.key === 'Enter') document.getElementById('saveMetaBtn').click();
   });

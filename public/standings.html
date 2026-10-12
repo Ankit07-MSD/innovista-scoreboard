@@ -8,20 +8,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .pt-row{display:grid;grid-template-columns:48px 1fr 80px 80px 70px 110px 90px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);}
-  .pt-row.head{background:linear-gradient(90deg, rgba(255,106,26,.22), rgba(8,20,28,.92), rgba(33,246,255,.12));color:var(--gold);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;}
+  .pt-row{display:grid;grid-template-columns:58px 52px minmax(130px,1.35fr) 68px 76px 62px 76px 82px;align-items:center;padding:9px 10px;border-bottom:1px solid var(--line);}
+  .pt-row.head{background:linear-gradient(180deg,#fff5b0,#ffd257 55%,#d38a00);color:#280000;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1px;text-shadow:none;}
   .pt-row:last-child{border-bottom:none;}
   .pt-row .c{text-align:center;}
   .pt-row .c.team{text-align:left;font-weight:600;font-size:16px;}
   .pt-row .c.pts{color:var(--cyan);font-family:'Orbitron',sans-serif;font-weight:700;}
   .pt-row:nth-child(2) .c.rank{color:var(--gold);text-shadow:0 0 10px rgba(255,210,87,.7);}
+  @media (max-width:720px){
+    .pt-row{grid-template-columns:42px 38px minmax(92px,1fr) 52px 54px 48px 56px 58px;font-size:12px;padding:8px 5px;}
+    .pt-row .c.team{font-size:13px;}
+    .pt-row.head{font-size:8px;}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="title">INNOVISTA<span>OVERALL POINTS TABLE</span></div>
   <div class="match-strip" id="matchMeta"></div>
-  <div class="table" id="table"></div>
+  <div class="table overallTable" id="table"></div>
   <div class="credit">
     <span>Powered by</span>
     <img src="assets/hld-esports-logo.png" alt="HLD ESPORTS">

@@ -11,7 +11,8 @@
       "cumPoints": 27,
       "cumKills": 1,
       "boyahs": 0,
-      "matches": 3
+      "matches": 3,
+      "championRush": false
     },
     {
       "id": "t17902239545150nk5",
@@ -24,7 +25,8 @@
       "cumPoints": 20,
       "cumKills": 4,
       "boyahs": 0,
-      "matches": 3
+      "matches": 3,
+      "championRush": true
     },
     {
       "id": "t1790223957591pzz3",
@@ -37,7 +39,8 @@
       "cumPoints": 41,
       "cumKills": 5,
       "boyahs": 3,
-      "matches": 3
+      "matches": 3,
+      "championRush": false
     }
   ],
   "placementPoints": [
@@ -59,6 +62,7 @@
     "position": 3,
     "ts": 1790224053932
   },
-  "stageName": "League Stage",
-  "groupName": "Group A"
+  "stageName": "SEMI FINAL",
+  "groupName": "GROUP A",
+  "qualifyCount": 2
 }

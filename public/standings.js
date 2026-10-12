@@ -8,12 +8,13 @@ function esc(s) {
 
 function renderMatchMeta(state) {
   const el = document.getElementById('matchMeta');
-  const stage = state.stageName || 'League Stage';
-  const group = state.groupName || 'Group A';
+  const stage = (state.stageName || 'League Stage').toUpperCase();
+  const group = (state.groupName || 'Group A').toUpperCase();
   el.innerHTML = `
-    <div class="meta-chip"><span>Stage</span><strong>${esc(stage)}</strong></div>
-    <div class="live-dot"></div>
-    <div class="meta-chip"><span>Group</span><strong>${esc(group)}</strong></div>
+    <div class="poster-present">HLD ESPORTS PRESENTS</div>
+    <div class="poster-stage">${esc(stage)}</div>
+    <div class="poster-group">${esc(group)}</div>
+    <div class="poster-mode">OVERALL STANDINGS</div>
   `;
 }
 
@@ -33,6 +34,7 @@ function render(state) {
       return {
         id: t.id,
         name: t.name,
+        championRush: Boolean(t.championRush),
         matches: t.matches || 0,
         boyahs: t.boyahs || 0,
         kills,
@@ -46,8 +48,10 @@ function render(state) {
     const previousRank = previousRanks.get(t.id);
     const movementClass = previousRank && previousRank > i + 1 ? ' rank-up' : (previousRank && previousRank < i + 1 ? ' rank-down' : '');
     const scoreClass = previousTotals.has(t.id) && t.total > previousTotals.get(t.id) ? ' ptsPulse' : '';
+    const qualifyClass = state.qualifyCount && i < state.qualifyCount ? ' qualified' : '';
     return `
-      <div class="pt-row${movementClass}" data-id="${t.id}">
+      <div class="pt-row${movementClass}${qualifyClass}" data-id="${t.id}">
+        <div class="c cr">${t.championRush ? '<span class="cr-badge"><b>CR</b><small>RUSH</small></span>' : ''}</div>
         <div class="c rank">${i + 1}</div>
         <div class="c team">${esc(t.name)}</div>
         <div class="c">${t.matches}</div>
@@ -61,8 +65,8 @@ function render(state) {
 
   table.innerHTML = `
     <div class="pt-row head">
-      <div class="c">#</div><div class="c team">TEAM</div><div class="c">MATCHES</div>
-      <div class="c">BOOYAH</div><div class="c">KILLS</div><div class="c">PLACEMENT&nbsp;PTS</div><div class="c">TOTAL</div>
+      <div class="c cr">RUSH</div><div class="c">POS</div><div class="c team">TEAM</div><div class="c">MATCH</div>
+      <div class="c">BOOYAH</div><div class="c">KILL</div><div class="c">PLACE</div><div class="c">TOTAL</div>
     </div>
     ${rowsHtml || '<div class="statusMsg">No teams added yet</div>'}
   `;

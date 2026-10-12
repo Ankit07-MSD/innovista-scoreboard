@@ -16,12 +16,13 @@ function pipHtml(alive) {
 
 function renderMatchMeta() {
   const el = document.getElementById('matchMeta');
-  const stage = state.stageName || 'League Stage';
-  const group = state.groupName || 'Group A';
+  const stage = (state.stageName || 'League Stage').toUpperCase();
+  const group = (state.groupName || 'Group A').toUpperCase();
   el.innerHTML = `
-    <div class="meta-chip"><span>Stage</span><strong>${esc(stage)}</strong></div>
-    <div class="live-dot"></div>
-    <div class="meta-chip"><span>Group</span><strong>${esc(group)}</strong></div>
+    <div class="poster-present">HLD ESPORTS PRESENTS</div>
+    <div class="poster-stage">${esc(stage)}</div>
+    <div class="poster-group">${esc(group)}</div>
+    <div class="poster-mode">LIVE STANDINGS</div>
   `;
 }
 
@@ -35,7 +36,7 @@ function renderTable() {
     firstRects[el.dataset.id] = el.getBoundingClientRect();
   });
 
-  container.innerHTML = `<div class="row head"><div class="c rank">#</div><div class="c team">TEAM</div><div class="c alive">ALIVE</div><div class="c elims">ELIMS</div><div class="c pts">PTS</div></div>`;
+  container.innerHTML = `<div class="row head"><div class="c cr">RUSH</div><div class="c rank">#</div><div class="c team">TEAM</div><div class="c alive">ALIVE</div><div class="c elims">ELIMS</div><div class="c pts">PTS</div></div>`;
 
   if (sorted.length === 0) {
     container.insertAdjacentHTML('beforeend', '<div class="statusMsg">No teams added yet</div>');
@@ -47,10 +48,12 @@ function renderTable() {
     const previousRank = previousRanks.get(t.id);
     const movementClass = previousRank && previousRank > i + 1 ? ' rank-up' : (previousRank && previousRank < i + 1 ? ' rank-down' : '');
     const scoreClass = previousTotals.has(t.id) && t.total > previousTotals.get(t.id) ? ' ptsPulse' : '';
-    el.className = (t.eliminated ? 'row elim' : (t.isWinner ? 'row winner' : 'row')) + movementClass;
+    const qualifyClass = state.qualifyCount && i < state.qualifyCount ? ' qualified' : '';
+    el.className = (t.eliminated ? 'row elim' : (t.isWinner ? 'row winner' : 'row')) + movementClass + qualifyClass;
     el.dataset.id = t.id;
     const rankLabel = t.isWinner ? '★' : (i + 1);
     el.innerHTML = `
+      <div class="c cr">${t.championRush ? '<span class="cr-badge"><b>CR</b><small>RUSH</small></span>' : ''}</div>
       <div class="c rank">${rankLabel}</div>
       <div class="c team">${t.isWinner ? '<span class="booyah">BOOYAH</span>' : ''}${esc(t.name)}</div>
       <div class="c alive">${pipHtml(t.alive)}</div>
