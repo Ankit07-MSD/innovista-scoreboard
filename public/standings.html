@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="style.css">
 <style>
   .pt-row{display:grid;grid-template-columns:48px 1fr 80px 80px 70px 110px 90px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);}
-  .pt-row.head{background:#0a1a2c;color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;}
+  .pt-row.head{background:linear-gradient(90deg, rgba(255,106,26,.22), rgba(8,20,28,.92), rgba(33,246,255,.12));color:var(--gold);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;}
   .pt-row:last-child{border-bottom:none;}
   .pt-row .c{text-align:center;}
   .pt-row .c.team{text-align:left;font-weight:600;font-size:16px;}
@@ -20,6 +20,7 @@
 <body>
 <div class="wrap">
   <div class="title">INNOVISTA<span>OVERALL POINTS TABLE</span></div>
+  <div class="match-strip" id="matchMeta"></div>
   <div class="table" id="table"></div>
   <div class="credit">
     <span>Powered by</span>

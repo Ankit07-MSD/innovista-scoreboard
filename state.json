@@ -58,5 +58,7 @@
     "name": "B",
     "position": 3,
     "ts": 1790224053932
-  }
+  },
+  "stageName": "League Stage",
+  "groupName": "Group A"
 }

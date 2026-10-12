@@ -25,13 +25,22 @@ function defaultPlacementPoints(n) {
   return arr;
 }
 function defaultState() {
-  return { teams: [], placementPoints: defaultPlacementPoints(12), lastElim: null };
+  return {
+    teams: [],
+    placementPoints: defaultPlacementPoints(12),
+    lastElim: null,
+    stageName: 'League Stage',
+    groupName: 'Group A'
+  };
 }
 
 let state = defaultState();
 if (fs.existsSync(STATE_FILE)) {
   try { state = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch (e) { /* ignore corrupt file, keep default */ }
 }
+state.stageName = state.stageName || 'League Stage';
+state.groupName = state.groupName || 'Group A';
+state.placementPoints = state.placementPoints || defaultPlacementPoints(Math.max(12, state.teams.length));
 function saveState() {
   fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
   fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
@@ -121,6 +130,11 @@ function handleAction(action, payload) {
     case 'renameTeam': {
       const t = findTeam(payload.id);
       if (t) t.name = (payload.name || t.name).trim();
+      break;
+    }
+    case 'updateMatchMeta': {
+      state.stageName = String(payload.stageName || '').trim() || 'League Stage';
+      state.groupName = String(payload.groupName || '').trim() || 'Group A';
       break;
     }
     case 'adjustAlive': {

@@ -14,6 +14,17 @@ function pipHtml(alive) {
   return h;
 }
 
+function renderMatchMeta() {
+  const el = document.getElementById('matchMeta');
+  const stage = state.stageName || 'League Stage';
+  const group = state.groupName || 'Group A';
+  el.innerHTML = `
+    <div class="meta-chip"><span>Stage</span><strong>${esc(stage)}</strong></div>
+    <div class="live-dot"></div>
+    <div class="meta-chip"><span>Group</span><strong>${esc(group)}</strong></div>
+  `;
+}
+
 function renderTable() {
   const container = document.getElementById('table');
   const sorted = [...state.teams].sort((a, b) => b.total - a.total);
@@ -141,6 +152,7 @@ function checkWinner() {
 
 socket.on('state', (s) => {
   state = s;
+  renderMatchMeta();
   renderTable();
   updateBanner();
   checkWinner();

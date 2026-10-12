@@ -6,7 +6,19 @@ function esc(s) {
   return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+function renderMatchMeta(state) {
+  const el = document.getElementById('matchMeta');
+  const stage = state.stageName || 'League Stage';
+  const group = state.groupName || 'Group A';
+  el.innerHTML = `
+    <div class="meta-chip"><span>Stage</span><strong>${esc(stage)}</strong></div>
+    <div class="live-dot"></div>
+    <div class="meta-chip"><span>Group</span><strong>${esc(group)}</strong></div>
+  `;
+}
+
 function render(state) {
+  renderMatchMeta(state);
   const table = document.getElementById('table');
   const firstRects = {};
   table.querySelectorAll('.pt-row[data-id]').forEach(el => {

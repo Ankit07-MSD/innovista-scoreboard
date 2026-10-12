@@ -1,12 +1,7 @@
 const socket = io();
 let state = null;
 
-// Ask for the admin key once and remember it in this browser.
-let adminKey = localStorage.getItem('innovista_admin_key');
-if (!adminKey) {
-  adminKey = prompt('Enter admin key:') || '';
-  localStorage.setItem('innovista_admin_key', adminKey);
-}
+let adminKey = localStorage.getItem('innovista_admin_key') || '';
 
 function esc(s) {
   return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -18,7 +13,17 @@ function pipHtml(alive) {
   return h;
 }
 
+function setInputValue(id, value) {
+  const input = document.getElementById(id);
+  if (document.activeElement !== input) input.value = value || '';
+}
+
 function sendAction(action, payload) {
+  const keyInput = document.getElementById('adminKey');
+  adminKey = keyInput.value || adminKey;
+  localStorage.setItem('innovista_admin_key', adminKey);
+  keyInput.value = '';
+  keyInput.placeholder = adminKey ? 'Saved in this browser' : 'admin123';
   socket.emit('admin:action', { key: adminKey, action, payload }, (res) => {
     const statusEl = document.getElementById('status');
     if (res && res.error === 'unauthorized') {
@@ -34,6 +39,10 @@ function sendAction(action, payload) {
 
 function render() {
   if (!state) return;
+
+  document.getElementById('adminKey').placeholder = adminKey ? 'Saved in this browser' : 'admin123';
+  setInputValue('stageName', state.stageName || 'League Stage');
+  setInputValue('groupName', state.groupName || 'Group A');
 
   const winner = state.teams.find(t => t.isWinner);
   const noticeEl = document.getElementById('matchNotice');
@@ -97,5 +106,22 @@ document.getElementById('addBtn').onclick = () => {
 document.getElementById('endMatchBtn').onclick = () => {
   if (confirm('End this match? Points earned so far will be locked in and carried forward. Kills/alive/eliminations reset for the next match.')) sendAction('endMatch', {});
 };
+document.getElementById('saveMetaBtn').onclick = () => {
+  sendAction('updateMatchMeta', {
+    stageName: document.getElementById('stageName').value,
+    groupName: document.getElementById('groupName').value
+  });
+};
+document.getElementById('adminKey').addEventListener('change', (event) => {
+  adminKey = event.target.value;
+  localStorage.setItem('innovista_admin_key', adminKey);
+  event.target.value = '';
+  event.target.placeholder = adminKey ? 'Saved in this browser' : 'admin123';
+});
+['stageName', 'groupName'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') document.getElementById('saveMetaBtn').click();
+  });
+});
 
 socket.on('state', (s) => { state = s; render(); });
