@@ -155,6 +155,7 @@ function showBooyah(teamName, winnerId) {
     </div>
   `;
   document.body.appendChild(overlay);
+  document.body.classList.add('booyah-active');
   activeBooyahOverlay = overlay;
   spawnConfetti(overlay, 130);
   booyahConfettiTimer = setInterval(() => spawnConfetti(overlay, 46), 2600);
@@ -169,7 +170,10 @@ function hideBooyah() {
   const overlay = activeBooyahOverlay;
   activeBooyahOverlay = null;
   overlay.classList.add('fadeOut');
-  setTimeout(() => overlay.remove(), 800);
+  setTimeout(() => {
+    overlay.remove();
+    if (!activeBooyahOverlay) document.body.classList.remove('booyah-active');
+  }, 800);
 }
 
 function checkWinner() {
