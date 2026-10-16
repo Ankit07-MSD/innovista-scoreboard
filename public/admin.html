@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="bgfx3d" aria-hidden="true"></div>
 <div class="admin-wrap">
   <div class="title">INNOVISTA<span>ADMIN PANEL</span></div>
 
@@ -47,6 +48,8 @@
   <a class="publicLink" href="/standings" target="_blank" style="margin-left:16px">Open Overall Points Table →</a>
   <div id="status" class="statusMsg"></div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="arena.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="admin.js"></script>
 </body>
