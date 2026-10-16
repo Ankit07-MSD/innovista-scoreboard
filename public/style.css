@@ -162,18 +162,21 @@ body::after{z-index:0;opacity:.72;
 .booyah-main::after{content:'';position:absolute;left:14%;right:14%;bottom:10%;height:10px;background:#ffd257;box-shadow:0 0 20px rgba(255,210,87,.9);transform:skew(-16deg);}
 @keyframes booyahMain{from{opacity:0;transform:translateX(-50%) translateY(-50px) scale(.62) skew(-12deg) rotate(-3deg);filter:blur(8px);}to{opacity:.96;transform:translateX(-50%) translateY(0) scale(1) skew(-12deg) rotate(-3deg);filter:blur(0);}}
 @keyframes booyahPulse{50%{filter:brightness(1.22);text-shadow:0 10px 0 #7b0000,0 0 42px rgba(255,245,176,1),0 0 100px rgba(255,0,0,.85);}}
-.character-line{position:absolute;left:50%;bottom:120px;z-index:4;width:min(104vw,1120px);height:clamp(270px,40vw,455px);display:grid;place-items:end center;perspective:900px;transform:translateX(-50%);}
+.character-line{position:absolute;left:50%;bottom:132px;z-index:4;width:min(108vw,1280px);height:clamp(290px,44vw,500px);display:flex;align-items:flex-end;justify-content:center;gap:clamp(0px,.7vw,10px);perspective:900px;transform:translateX(-50%);}
 .character-line::before{content:'';position:absolute;left:6%;right:6%;bottom:4%;height:42%;
   background:radial-gradient(ellipse at center, rgba(255,210,87,.32), rgba(255,48,24,.16) 42%, transparent 72%);
   filter:blur(18px);animation:squadAura 1.65s ease-in-out infinite;z-index:0;}
 .character-line::after{content:'';position:absolute;left:7%;right:7%;bottom:7%;height:14px;border-radius:50%;
   background:radial-gradient(ellipse at center, rgba(0,0,0,.7), transparent 72%);filter:blur(2px);z-index:0;}
-.booyah-squad{position:relative;z-index:2;width:min(100%,1060px);height:100%;object-fit:contain;object-position:center bottom;
+.booyah-squad{position:relative;z-index:2;flex:0 1 20%;min-width:0;height:100%;object-fit:contain;object-position:center bottom;transform-origin:center bottom;opacity:0;--rise-delay:0s;
   filter:drop-shadow(0 28px 20px rgba(0,0,0,.62)) drop-shadow(0 0 24px rgba(255,210,87,.22));
-  clip-path:inset(100% 0 0);animation:squadRise 1.05s cubic-bezier(.16,1,.3,1) both, squadFloat 2.35s ease-in-out 1.1s infinite;}
-@keyframes squadRise{0%{opacity:0;clip-path:inset(100% 0 0);transform:translateY(85px) scale(.94) rotateX(14deg);filter:blur(8px) drop-shadow(0 24px 20px rgba(0,0,0,.5));}70%{opacity:1;clip-path:inset(0 0 0);transform:translateY(-8px) scale(1.015) rotateX(-2deg);filter:blur(0) drop-shadow(0 30px 22px rgba(0,0,0,.62)) drop-shadow(0 0 30px rgba(255,210,87,.32));}100%{opacity:1;clip-path:inset(0 0 0);transform:translateY(0) scale(1) rotateX(0);filter:drop-shadow(0 28px 20px rgba(0,0,0,.62)) drop-shadow(0 0 24px rgba(255,210,87,.22));}}
+.booyah-squad{animation:squadRise .95s cubic-bezier(.16,1,.3,1) var(--rise-delay) both, squadFloat 2.7s ease-in-out calc(var(--rise-delay) + .95s) infinite;}
+.booyah-squad:nth-child(2){--rise-delay:.16s}.booyah-squad:nth-child(3){--rise-delay:.32s}.booyah-squad:nth-child(4){--rise-delay:.48s}.booyah-squad:nth-child(5){--rise-delay:.64s}
+@keyframes squadRise{0%{opacity:0;transform:translateY(130px) scale(.92) rotateX(12deg);filter:blur(9px) drop-shadow(0 24px 20px rgba(0,0,0,.5));}72%{opacity:1;transform:translateY(-9px) scale(1.025) rotateX(-2deg);filter:blur(0) drop-shadow(0 30px 22px rgba(0,0,0,.62)) drop-shadow(0 0 30px rgba(255,210,87,.32));}100%{opacity:1;transform:translateY(0) scale(1) rotateX(0);filter:drop-shadow(0 28px 20px rgba(0,0,0,.62)) drop-shadow(0 0 24px rgba(255,210,87,.22));}}
 @keyframes squadFloat{50%{transform:translateY(-10px) scale(1.018);filter:drop-shadow(0 34px 24px rgba(0,0,0,.68)) drop-shadow(0 0 34px rgba(255,210,87,.32)) brightness(1.08);}}
 @keyframes squadAura{50%{opacity:.74;filter:blur(24px) brightness(1.35);}}
+@media(max-width:640px){.character-line{width:112vw;height:clamp(230px,61vw,330px);bottom:155px;gap:0}.booyah-squad{flex-basis:20%;filter:drop-shadow(0 12px 12px rgba(0,0,0,.62)) drop-shadow(0 0 12px rgba(255,210,87,.22))}}
+@media(prefers-reduced-motion:reduce){.booyah-squad{animation:fadeUp .4s ease-out both}.booyah-squad:nth-child(n){animation-delay:0s}}
 .winner-plate{position:absolute;left:50%;bottom:56px;z-index:6;width:min(92vw,1120px);min-height:128px;padding:20px 42px;display:grid;place-items:center;transform:translateX(-50%);
   background:linear-gradient(100deg,#fa0b05,#d90000 58%,#7b0000);border-left:12px solid var(--cream);box-shadow:0 0 32px rgba(255,0,0,.55),0 0 54px rgba(255,210,87,.2);
   animation:plateIn .65s cubic-bezier(.16,1.45,.3,1) .78s both;}
