@@ -112,6 +112,27 @@
   ctx.fillText('INNOVISTA', 550, 96);
   const texture = new THREE.CanvasTexture(logoCanvas);
   texture.minFilter = THREE.LinearFilter;
+  const logoWidth = mobile ? 18 : 28;
+  const logoHeight = logoWidth * logoCanvas.height / logoCanvas.width;
+  const wordmark = new THREE.Group();
+  wordmark.position.set(0, .8, -1.5);
+  wordmark.rotation.set(-.12, .12, -.025);
+  for (let layer = 8; layer > 0; layer--) {
+    const edge = new THREE.Mesh(new THREE.PlaneGeometry(logoWidth, logoHeight), new THREE.MeshBasicMaterial({
+      color: layer % 2 ? 0xff6a1a : 0xffd257, transparent: true, opacity: .16,
+      side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
+    }));
+    edge.position.z = -layer * .045;
+    wordmark.add(edge);
+  }
+  const wordFace = new THREE.Mesh(new THREE.PlaneGeometry(logoWidth, logoHeight), new THREE.MeshBasicMaterial({
+    map: texture, transparent: true, opacity: .48, side: THREE.DoubleSide,
+    depthWrite: false, blending: THREE.AdditiveBlending
+  }));
+  wordFace.position.z = .01;
+  wordmark.add(wordFace);
+  scene.add(wordmark);
+
   const marks = [];
   for (let i = 0; i < (mobile ? 2 : 4); i++) {
     const width = mobile ? 10 : 17;
@@ -161,6 +182,11 @@
       arena.rotation.y += .00055;
       arena.rotation.z += .00022;
       arena.scale.setScalar(1 + Math.sin(t * .42) * .018);
+      wordmark.position.y = .8 + Math.sin(t * .48) * .62;
+      wordmark.rotation.x = -.12 + Math.sin(t * .52) * .055;
+      wordmark.rotation.y = .12 + Math.sin(t * .36) * .22;
+      wordmark.rotation.z = -.025 + Math.sin(t * .28) * .025;
+      wordmark.scale.setScalar(1 + Math.sin(t * .7) * .025);
       portals.forEach(portal => {
         const { side, baseY, phase } = portal.userData;
         portal.position.y = baseY + Math.sin(t * .42 + phase) * .32;
@@ -183,6 +209,7 @@
         mark.position.z = mark.userData.z + wave * 1.4;
         mark.material.opacity = .055 + (wave + 1) * .045;
       });
+      wordFace.material.opacity = .38 + (Math.sin(t * .9) + 1) * .08;
       grid.rotation.y += .00025;
       camera.position.x += (pointerX * 1.1 - camera.position.x) * .012;
       camera.position.y += (1.5 - pointerY * .7 - camera.position.y) * .012;

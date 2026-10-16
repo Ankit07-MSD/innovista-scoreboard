@@ -148,7 +148,7 @@ function showBooyah(teamName, winnerId) {
     </div>
     <div class="booyah-main">BOOYAH!</div>
     <div class="character-line" aria-hidden="true">
-      <img class="booyah-squad" src="assets/booyah-squad.svg" alt="">
+      <img class="booyah-squad" src="assets/innovista-booyah-squad.png" alt="">
     </div>
     <div class="winner-plate">
       <div class="booyah-team">${esc(teamName)}</div>
