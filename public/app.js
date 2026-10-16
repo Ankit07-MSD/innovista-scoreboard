@@ -148,7 +148,7 @@ function showBooyah(teamName, winnerId) {
     </div>
     <div class="booyah-main">BOOYAH!</div>
     <div class="character-line" aria-hidden="true">
-      ${Array.from({ length: 5 }, (_, index) => `<img class="booyah-squad" src="assets/players/player-${index + 1}.png" alt="" loading="eager">`).join('')}
+      <img class="booyah-squad" src="assets/innovista-squad-cutout.png" alt="" loading="eager">
     </div>
     <div class="winner-plate">
       <div class="booyah-team">${esc(teamName)}</div>
