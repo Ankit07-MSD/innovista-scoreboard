@@ -44,9 +44,14 @@ state.groupName = state.groupName || 'Group A';
 state.qualifyCount = Math.max(0, parseInt(state.qualifyCount, 10) || 0);
 state.placementPoints = state.placementPoints || defaultPlacementPoints(Math.max(12, state.teams.length));
 state.teams.forEach(t => { t.championRush = Boolean(t.championRush); });
+let saveQueue = Promise.resolve();
 function saveState() {
-  fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
-  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+  const snapshot = JSON.stringify(state, null, 2);
+  saveQueue = saveQueue.catch(() => {}).then(async () => {
+    await fs.promises.mkdir(path.dirname(STATE_FILE), { recursive: true });
+    await fs.promises.writeFile(STATE_FILE, snapshot);
+  });
+  return saveQueue;
 }
 
 function findTeam(id) { return state.teams.find(t => t.id === id); }
@@ -201,12 +206,15 @@ io.on('connection', (socket) => {
     }
     try {
       handleAction(action, payload || {});
-      saveState();
-      broadcast();
-      if (cb) cb({ ok: true });
     } catch (e) {
       if (cb) cb({ error: e.message });
+      return;
     }
+    // Update every connected display immediately; persist without blocking the
+    // Node event loop that serves button actions and static page requests.
+    broadcast();
+    if (cb) cb({ ok: true });
+    saveState().catch(error => console.error('Failed to persist scoreboard state:', error));
   });
 });
 
