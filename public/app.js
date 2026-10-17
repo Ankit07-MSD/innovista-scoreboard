@@ -58,12 +58,12 @@ function renderTable() {
     el.innerHTML = `
       <div class="c cr">${t.championRush ? '<span class="cr-badge"><b>CR</b><small>RUSH</small></span>' : ''}</div>
       <div class="c rank">${rankLabel}</div>
-      <div class="c team">${t.isWinner ? '<span class="booyah">BOOYAH</span>' : ''}${esc(t.name)}</div>
+      <div class="c team">${t.isWinner ? '<span class="booyah">BOOYAH</span>' : ''}${esc(t.name)}${t.eliminated ? '<span class="eliminated-tag">ELIMINATED</span>' : ''}</div>
       <div class="c alive">${pipHtml(t.alive)}</div>
       <div class="c elims">${t.kills}</div>
       <div class="c pts ${scoreClass}">${t.total}</div>`;
     container.appendChild(el);
-    if (justEliminated) setTimeout(() => el.classList.remove('elimination-sweep'), 1150);
+    if (justEliminated) setTimeout(() => el.classList.remove('elimination-sweep'), 1550);
   });
 
   // FLIP step 2 (Last, Invert, Play): compare new position to old, animate the difference away.
