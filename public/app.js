@@ -30,6 +30,7 @@ function renderMatchMeta() {
 
 function renderTable() {
   const container = document.getElementById('table');
+  const eliminationOccurred = state.teams.some(t => previousEliminations.get(t.id) === false && t.eliminated);
   const sorted = [...state.teams].sort((a, b) => b.total - a.total);
 
   // FLIP step 1 (First): remember where every existing row currently sits on screen.
@@ -48,7 +49,7 @@ function renderTable() {
   sorted.forEach((t, i) => {
     const el = document.createElement('div');
     const previousRank = previousRanks.get(t.id);
-    const movementClass = previousRank && previousRank > i + 1 ? ' rank-up' : (previousRank && previousRank < i + 1 ? ' rank-down' : '');
+    const movementClass = !eliminationOccurred && previousRank && previousRank > i + 1 ? ' rank-up' : (!eliminationOccurred && previousRank && previousRank < i + 1 ? ' rank-down' : '');
     const scoreClass = previousTotals.has(t.id) && t.total > previousTotals.get(t.id) ? ' ptsPulse' : '';
     const qualifyClass = state.qualifyCount && i < state.qualifyCount ? ' qualified' : '';
     const justEliminated = previousEliminations.get(t.id) === false && t.eliminated;
@@ -58,19 +59,19 @@ function renderTable() {
     el.innerHTML = `
       <div class="c cr">${t.championRush ? '<span class="cr-badge"><b>CR</b><small>RUSH</small></span>' : ''}</div>
       <div class="c rank">${rankLabel}</div>
-      <div class="c team">${t.isWinner ? '<span class="booyah">BOOYAH</span>' : ''}${esc(t.name)}${t.eliminated ? '<span class="eliminated-tag">ELIMINATED</span>' : ''}</div>
+      <div class="c team">${t.isWinner ? '<span class="booyah">BOOYAH</span>' : ''}${esc(t.name)}</div>
       <div class="c alive">${pipHtml(t.alive)}</div>
       <div class="c elims">${t.kills}</div>
       <div class="c pts ${scoreClass}">${t.total}</div>`;
     container.appendChild(el);
-    if (justEliminated) setTimeout(() => el.classList.remove('elimination-sweep'), 1550);
+    if (justEliminated) setTimeout(() => el.classList.remove('elimination-sweep'), 2800);
   });
 
   // FLIP step 2 (Last, Invert, Play): compare new position to old, animate the difference away.
   container.querySelectorAll('.row[data-id]').forEach(el => {
     const id = el.dataset.id;
     const first = firstRects[id];
-    if (first) {
+    if (first && !eliminationOccurred) {
       const last = el.getBoundingClientRect();
       const deltaY = first.top - last.top;
       if (Math.abs(deltaY) > 1) {
