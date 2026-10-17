@@ -5,6 +5,7 @@ let activeBooyahOverlay = null;
 let booyahConfettiTimer = null;
 const previousRanks = new Map();
 const previousTotals = new Map();
+const previousEliminations = new Map();
 
 function esc(s) {
   return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -50,7 +51,8 @@ function renderTable() {
     const movementClass = previousRank && previousRank > i + 1 ? ' rank-up' : (previousRank && previousRank < i + 1 ? ' rank-down' : '');
     const scoreClass = previousTotals.has(t.id) && t.total > previousTotals.get(t.id) ? ' ptsPulse' : '';
     const qualifyClass = state.qualifyCount && i < state.qualifyCount ? ' qualified' : '';
-    el.className = (t.eliminated ? 'row elim' : (t.isWinner ? 'row winner' : 'row')) + movementClass + qualifyClass;
+    const justEliminated = previousEliminations.get(t.id) === false && t.eliminated;
+    el.className = (t.eliminated ? 'row elim' : (t.isWinner ? 'row winner' : 'row')) + movementClass + qualifyClass + (justEliminated ? ' elimination-sweep' : '');
     el.dataset.id = t.id;
     const rankLabel = t.isWinner ? '★' : (i + 1);
     el.innerHTML = `
@@ -61,6 +63,7 @@ function renderTable() {
       <div class="c elims">${t.kills}</div>
       <div class="c pts ${scoreClass}">${t.total}</div>`;
     container.appendChild(el);
+    if (justEliminated) setTimeout(() => el.classList.remove('elimination-sweep'), 1150);
   });
 
   // FLIP step 2 (Last, Invert, Play): compare new position to old, animate the difference away.
@@ -88,9 +91,11 @@ function renderTable() {
 
   previousRanks.clear();
   previousTotals.clear();
+  previousEliminations.clear();
   sorted.forEach((t, i) => {
     previousRanks.set(t.id, i + 1);
     previousTotals.set(t.id, t.total);
+    previousEliminations.set(t.id, Boolean(t.eliminated));
   });
 }
 
