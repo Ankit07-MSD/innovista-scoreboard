@@ -2,6 +2,16 @@ const socket = io();
 const previousRanks = new Map();
 const previousTotals = new Map();
 
+function compareStandings(a, b) {
+  const points = (b.total || 0) - (a.total || 0);
+  if (points) return points;
+  if (a.sortBooyahs !== b.sortBooyahs) return b.sortBooyahs - a.sortBooyahs;
+  if (a.kills !== b.kills) return b.kills - a.kills;
+  const aPosition = Number(a.lastPosition) || Number.POSITIVE_INFINITY;
+  const bPosition = Number(b.lastPosition) || Number.POSITIVE_INFINITY;
+  return aPosition === bPosition ? 0 : aPosition - bPosition;
+}
+
 function esc(s) {
   return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -36,12 +46,14 @@ function render(state) {
         championRush: Boolean(t.championRush),
         matches: t.matches || 0,
         boyahs: t.boyahs || 0,
+        sortBooyahs: (t.boyahs || 0) + Number(Boolean(t.isWinner)),
         kills,
+        lastPosition: t.lastPosition || t.position || null,
         placementPts: bankedPlacementPts + livePlacementPts,
         total: t.total
       };
     })
-    .sort((a, b) => b.total - a.total);
+    .sort(compareStandings);
 
   const rowsHtml = rows.map((t, i) => {
     const previousRank = previousRanks.get(t.id);

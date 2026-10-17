@@ -43,7 +43,11 @@ state.stageName = state.stageName || 'League Stage';
 state.groupName = state.groupName || 'Group A';
 state.qualifyCount = Math.max(0, parseInt(state.qualifyCount, 10) || 0);
 state.placementPoints = state.placementPoints || defaultPlacementPoints(Math.max(12, state.teams.length));
-state.teams.forEach(t => { t.championRush = Boolean(t.championRush); });
+state.teams.forEach(t => {
+  t.championRush = Boolean(t.championRush);
+  const lastPosition = parseInt(t.lastPosition, 10);
+  t.lastPosition = Number.isInteger(lastPosition) && lastPosition > 0 ? lastPosition : null;
+});
 let saveQueue = Promise.resolve();
 function saveState() {
   const snapshot = JSON.stringify(state, null, 2);
@@ -100,6 +104,7 @@ function rolloverMatch() {
     t.cumPoints = (t.cumPoints || 0) + matchPoints;
     t.cumKills = (t.cumKills || 0) + (t.kills || 0);
     if (t.isWinner) t.boyahs = (t.boyahs || 0) + 1;
+    t.lastPosition = t.position || null;
     t.matches = (t.matches || 0) + 1;
     t.kills = 0; t.alive = 4; t.eliminated = false; t.position = null; t.isWinner = false;
   });

@@ -7,6 +7,18 @@ const previousRanks = new Map();
 const previousTotals = new Map();
 const previousEliminations = new Map();
 
+function compareStandings(a, b) {
+  const points = (b.total || 0) - (a.total || 0);
+  if (points) return points;
+  const booyahs = ((b.boyahs || 0) + Number(Boolean(b.isWinner))) - ((a.boyahs || 0) + Number(Boolean(a.isWinner)));
+  if (booyahs) return booyahs;
+  const kills = ((b.cumKills || 0) + (b.kills || 0)) - ((a.cumKills || 0) + (a.kills || 0));
+  if (kills) return kills;
+  const aPosition = Number(a.lastPosition || a.position) || Number.POSITIVE_INFINITY;
+  const bPosition = Number(b.lastPosition || b.position) || Number.POSITIVE_INFINITY;
+  return aPosition === bPosition ? 0 : aPosition - bPosition;
+}
+
 function esc(s) {
   return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -31,7 +43,7 @@ function renderMatchMeta() {
 function renderTable() {
   const container = document.getElementById('table');
   const eliminationOccurred = state.teams.some(t => previousEliminations.get(t.id) === false && t.eliminated);
-  const sorted = [...state.teams].sort((a, b) => b.total - a.total);
+  const sorted = [...state.teams].sort(compareStandings);
 
   // FLIP step 1 (First): remember where every existing row currently sits on screen.
   const firstRects = {};
