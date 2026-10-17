@@ -22,7 +22,8 @@
     fallback();
     return;
   }
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1 : 1.5));
+  // A decorative backdrop doesn't need a high-DPI buffer; cap fill-rate on laptops.
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1 : 1.25));
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x000000, 0);
   host.appendChild(renderer.domElement);
@@ -41,7 +42,7 @@
     { radius: mobile ? 6.4 : 9.2, tube: .045, color: 0xff6a1a, opacity: .2, p: [3, 5], spin: -.0008 },
     { radius: mobile ? 7.8 : 11, tube: .025, color: 0x16dff0, opacity: .2, p: [2, 5], spin: .00055 }
   ].forEach(s => {
-    const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(s.radius, s.tube, 180, 5, ...s.p), additive(s.color, s.opacity));
+    const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(s.radius, s.tube, 112, 4, ...s.p), additive(s.color, s.opacity));
     knot.userData.spin = s.spin;
     arena.add(knot);
   });
@@ -60,7 +61,7 @@
       [radius * .78, .068, 0xff6a1a, .29],
       [radius * 1.13, .025, 0x16dff0, .34]
     ].forEach(([r, tube, color, opacity], i) => {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 8, 112), additive(color, opacity));
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 6, 72), additive(color, opacity));
       ring.rotation.x = i === 1 ? .18 : -.12;
       ring.userData.spin = (i % 2 ? -.0025 : .0017) * side;
       portal.add(ring);
@@ -171,16 +172,26 @@
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight);
+    if (reducedMotion) renderer.render(scene, camera);
   }, { passive: true });
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clock = new THREE.Clock();
-  const animate = () => {
-    requestAnimationFrame(animate);
+  let animationFrame = 0;
+  let lastFrameAt = 0;
+  const animate = (now) => {
+    if (document.hidden) { animationFrame = 0; return; }
+    if (now - lastFrameAt < 1000 / 30) {
+      animationFrame = requestAnimationFrame(animate);
+      return;
+    }
+    const step = Math.min((now - lastFrameAt) / (1000 / 60), 3);
+    lastFrameAt = now;
+    animationFrame = requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
     if (!reducedMotion) {
-      arena.rotation.y += .00055;
-      arena.rotation.z += .00022;
+      arena.rotation.y += .00055 * step;
+      arena.rotation.z += .00022 * step;
       arena.scale.setScalar(1 + Math.sin(t * .42) * .018);
       wordmark.position.y = .8 + Math.sin(t * .48) * .62;
       wordmark.rotation.x = -.12 + Math.sin(t * .52) * .055;
@@ -192,15 +203,15 @@
         portal.position.y = baseY + Math.sin(t * .42 + phase) * .32;
         portal.rotation.y = side * -.2 + Math.sin(t * .2 + phase) * .1;
         portal.children.forEach(child => {
-          if (child.userData.spin) child.rotation.z += child.userData.spin;
-          if (child.userData.core) { child.rotation.x += .004; child.rotation.y -= .006; }
+          if (child.userData.spin) child.rotation.z += child.userData.spin * step;
+          if (child.userData.core) { child.rotation.x += .004 * step; child.rotation.y -= .006 * step; }
         });
       });
       shards.forEach(shard => {
-        shard.angle += shard.speed * .01;
+        shard.angle += shard.speed * .01 * step;
         shard.mesh.position.set(Math.cos(shard.angle) * shard.radius, Math.sin(shard.angle) * shard.radius, Math.sin(shard.angle * 2) * .55);
-        shard.mesh.rotation.x += .014;
-        shard.mesh.rotation.y -= .018;
+        shard.mesh.rotation.x += .014 * step;
+        shard.mesh.rotation.y -= .018 * step;
       });
       marks.forEach(mark => {
         const wave = Math.sin(t * .34 + mark.userData.phase);
@@ -210,12 +221,32 @@
         mark.material.opacity = .055 + (wave + 1) * .045;
       });
       wordFace.material.opacity = .38 + (Math.sin(t * .9) + 1) * .08;
-      grid.rotation.y += .00025;
-      camera.position.x += (pointerX * 1.1 - camera.position.x) * .012;
-      camera.position.y += (1.5 - pointerY * .7 - camera.position.y) * .012;
+      grid.rotation.y += .00025 * step;
+      const ease = 1 - Math.pow(1 - .012, step);
+      camera.position.x += (pointerX * 1.1 - camera.position.x) * ease;
+      camera.position.y += (1.5 - pointerY * .7 - camera.position.y) * ease;
     }
     camera.lookAt(0, 0, -2);
     renderer.render(scene, camera);
   };
-  animate();
+  if (reducedMotion) {
+    camera.lookAt(0, 0, -2);
+    renderer.render(scene, camera);
+  } else {
+    const resumeAnimation = () => {
+      if (!document.hidden && !animationFrame) {
+        lastFrameAt = 0;
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      } else {
+        resumeAnimation();
+      }
+    });
+    resumeAnimation();
+  }
 })();
