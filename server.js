@@ -31,6 +31,7 @@ function defaultState() {
     lastElim: null,
     stageName: 'League Stage',
     groupName: 'Group A',
+    mapName: '',
     qualifyCount: 0,
     matchNumber: 1,
     lastRecap: null,
@@ -44,6 +45,7 @@ if (fs.existsSync(STATE_FILE)) {
 }
 state.stageName = state.stageName || 'League Stage';
 state.groupName = state.groupName || 'Group A';
+state.mapName = String(state.mapName || '');
 state.qualifyCount = Math.max(0, parseInt(state.qualifyCount, 10) || 0);
 state.matchNumber = Math.max(1, parseInt(state.matchNumber, 10) || 1);
 state.lastRecap = state.lastRecap && Array.isArray(state.lastRecap.teams) ? state.lastRecap : null;
@@ -136,6 +138,7 @@ function rolloverMatch() {
     matchNumber: state.matchNumber,
     stageName: state.stageName,
     groupName: state.groupName,
+    mapName: state.mapName,
     winner: results.find(t => t.isWinner)?.name || results.find(t => t.position === 1)?.name || null,
     teams: results,
     completedAt: Date.now()
@@ -151,6 +154,7 @@ function rolloverMatch() {
     t.kills = 0; t.alive = 4; t.eliminated = false; t.position = null; t.isWinner = false;
   });
   state.matchNumber += 1;
+  state.showTeamComparison = false;
   state.lastElim = null;
 }
 
@@ -199,6 +203,7 @@ function handleAction(action, payload) {
     case 'updateMatchMeta': {
       state.stageName = String(payload.stageName || '').trim() || 'League Stage';
       state.groupName = String(payload.groupName || '').trim() || 'Group A';
+      state.mapName = String(payload.mapName || '').trim();
       state.qualifyCount = Math.max(0, parseInt(payload.qualifyCount, 10) || 0);
       break;
     }

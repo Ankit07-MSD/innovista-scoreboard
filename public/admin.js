@@ -47,6 +47,7 @@ function render() {
   comparisonBtn.classList.toggle('rush-on', Boolean(state.showTeamComparison));
   setInputValue('stageName', state.stageName || 'League Stage');
   setInputValue('groupName', state.groupName || 'Group A');
+  setInputValue('mapName', state.mapName || '');
   setInputValue('qualifyCount', state.qualifyCount || 0);
 
   const winner = state.teams.find(t => t.isWinner);
@@ -131,6 +132,7 @@ document.getElementById('saveMetaBtn').onclick = () => {
   sendAction('updateMatchMeta', {
     stageName: document.getElementById('stageName').value,
     groupName: document.getElementById('groupName').value,
+    mapName: document.getElementById('mapName').value,
     qualifyCount: document.getElementById('qualifyCount').value
   });
 };
@@ -140,7 +142,7 @@ document.getElementById('adminKey').addEventListener('change', (event) => {
   event.target.value = '';
   event.target.placeholder = adminKey ? 'Saved in this browser' : 'admin123';
 });
-['stageName', 'groupName', 'qualifyCount'].forEach(id => {
+['stageName', 'groupName', 'mapName', 'qualifyCount'].forEach(id => {
   document.getElementById(id).addEventListener('keydown', (event) => {
     if (event.key === 'Enter') document.getElementById('saveMetaBtn').click();
   });

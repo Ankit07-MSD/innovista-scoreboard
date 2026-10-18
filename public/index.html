@@ -6,7 +6,7 @@
 <title>INNOVISTA Live Standings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=round-sidepanel-2">
+<link rel="stylesheet" href="style.css?v=round-display-4">
 </head>
 <body>
 <div id="bgfx3d" aria-hidden="true"></div>
@@ -18,16 +18,6 @@
     <div class="table" id="table"></div>
     <aside class="live-sidebar" aria-label="Live match details">
       <section class="live-card" id="roundDetails"></section>
-      <section class="live-card comparison-card" id="comparisonCard" hidden>
-        <div class="live-card-title">TEAM COMPARISON</div>
-        <div class="compare-selects">
-          <select id="compareTeamA" aria-label="First team to compare"></select>
-          <span>VS</span>
-          <select id="compareTeamB" aria-label="Second team to compare"></select>
-        </div>
-        <div id="teamComparison"></div>
-      </section>
-      <section class="live-card recap-card" id="matchRecap"></section>
     </aside>
   </div>
   <div class="credit">
@@ -37,7 +27,7 @@
   </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="app.js?v=round-sidepanel-2"></script>
+<script src="app.js?v=round-display-4"></script>
 <script src="arena-loader.js"></script>
 </body>
 </html>

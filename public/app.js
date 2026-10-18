@@ -3,6 +3,8 @@ let state = null;
 let winnerShownFor = null;
 let activeBooyahOverlay = null;
 let booyahConfettiTimer = null;
+let initialStateReceived = false;
+let lastRecapSeenAt = null;
 const previousRanks = new Map();
 const previousTotals = new Map();
 const previousEliminations = new Map();
@@ -42,42 +44,53 @@ function renderMatchMeta() {
 
 function renderRoundDetails() {
   const el = document.getElementById('roundDetails');
-  const aliveTeams = state.teams.filter(t => !t.eliminated && !t.isWinner).length + state.teams.filter(t => t.isWinner).length;
-  const kills = state.teams.reduce((sum, t) => sum + (Number(t.kills) || 0), 0);
-  const winner = state.teams.find(t => t.isWinner);
   el.innerHTML = `
-    <div class="live-card-title">ROUND DETAILS <span class="live-dot"></span></div>
+    <div class="live-card-title">ROUND DETAILS</div>
     <div class="round-number">MATCH ${Number(state.matchNumber) || 1}</div>
     <div class="round-meta"><span>STAGE</span><strong>${esc(state.stageName || 'League Stage')}</strong></div>
     <div class="round-meta"><span>GROUP</span><strong>${esc(state.groupName || 'Group A')}</strong></div>
-    <div class="round-stats">
-      <div><strong>${aliveTeams}</strong><span>TEAMS ALIVE</span></div>
-      <div><strong>${kills}</strong><span>TOTAL KILLS</span></div>
-    </div>
-    ${winner ? `<div class="round-winner">🏆 BOOYAH · ${esc(winner.name)}</div>` : '<div class="round-status"><i></i> MATCH IN PROGRESS</div>'}
+    ${state.mapName ? `<div class="round-meta"><span>MAP</span><strong>${esc(state.mapName)}</strong></div>` : ''}
   `;
 }
 
 function renderTeamComparison() {
-  const card = document.getElementById('comparisonCard');
-  card.hidden = !state.showTeamComparison;
-  if (card.hidden) return;
-  const firstSelect = document.getElementById('compareTeamA');
-  const secondSelect = document.getElementById('compareTeamB');
-  const output = document.getElementById('teamComparison');
+  let overlay = document.getElementById('comparisonOverlay');
+  if (!state.showTeamComparison) {
+    overlay?.remove();
+    return;
+  }
+  const previousFirst = overlay?.querySelector('#compareTeamA')?.value || '';
+  const previousSecond = overlay?.querySelector('#compareTeamB')?.value || '';
   const sorted = [...state.teams].sort(compareStandings);
-  const previousFirst = firstSelect.value;
-  const previousSecond = secondSelect.value;
+  if (!overlay) {
+    overlay = document.createElement('section');
+    overlay.id = 'comparisonOverlay';
+    overlay.className = 'full-screen-overlay comparison-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Live team comparison');
+    document.body.appendChild(overlay);
+  }
   const options = sorted.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
-  firstSelect.innerHTML = options || '<option value="">Add teams</option>';
-  secondSelect.innerHTML = options || '<option value="">Add teams</option>';
-  firstSelect.value = sorted.some(t => t.id === previousFirst) ? previousFirst : (sorted[0]?.id || '');
-  secondSelect.value = sorted.some(t => t.id === previousSecond) ? previousSecond : (sorted[1]?.id || sorted[0]?.id || '');
+  const firstId = sorted.some(t => t.id === previousFirst) ? previousFirst : (sorted[0]?.id || '');
+  const secondId = sorted.some(t => t.id === previousSecond) ? previousSecond : (sorted[1]?.id || sorted[0]?.id || '');
+  overlay.innerHTML = `<div class="team-compare-modal">
+    <div class="full-modal-kicker">INNOVISTA · LIVE STATS</div>
+    <h2>TEAM COMPARISON</h2>
+    <div class="compare-selects"><select id="compareTeamA" aria-label="First team to compare">${options || '<option value="">No teams</option>'}</select><span>VS</span><select id="compareTeamB" aria-label="Second team to compare">${options || '<option value="">No teams</option>'}</select></div>
+    <div id="teamComparison"></div>
+    <div class="modal-hint">Comparison is controlled from the admin panel</div>
+  </div>`;
+  const firstSelect = overlay.querySelector('#compareTeamA');
+  const secondSelect = overlay.querySelector('#compareTeamB');
+  firstSelect.value = firstId;
+  secondSelect.value = secondId;
 
   const a = state.teams.find(t => t.id === firstSelect.value);
   const b = state.teams.find(t => t.id === secondSelect.value);
+  const output = overlay.querySelector('#teamComparison');
   if (!a || !b) {
-    output.innerHTML = '<div class="compare-empty">Add teams to compare live stats.</div>';
+    output.innerHTML = '<div class="compare-empty">Add at least two teams to compare live stats.</div>';
     return;
   }
   const rankById = new Map(sorted.map((t, i) => [t.id, i + 1]));
@@ -93,27 +106,60 @@ function renderTeamComparison() {
     ${stats.map(([label, av, bv]) => `<div class="compare-stat"><span>${label}</span><b>${av}</b><b>${bv}</b></div>`).join('')}`;
 }
 
+function currentMatchRecap() {
+  const eliminated = state.teams.filter(t => t.eliminated).length;
+  const teams = state.teams.map(t => ({
+    ...t,
+    position: t.position || (t.isWinner ? 1 : Math.max(1, state.teams.length - eliminated)),
+    placementPoints: Number(t.livePlacementPts) || 0,
+    points: (Number(t.kills) || 0) + (Number(t.livePlacementPts) || 0)
+  })).sort((a, b) => a.position - b.position || compareStandings(a, b));
+  return { matchNumber: state.matchNumber, stageName: state.stageName, groupName: state.groupName, mapName: state.mapName,
+    winner: teams.find(t => t.isWinner)?.name || teams.find(t => t.position === 1)?.name || null, teams };
+}
+
+function openMatchRecap(recap) {
+  if (!recap || !Array.isArray(recap.teams) || !recap.teams.length) return;
+  document.getElementById('comparisonOverlay')?.remove();
+  document.getElementById('matchRecapOverlay')?.remove();
+  const overlay = document.createElement('section');
+  overlay.id = 'matchRecapOverlay';
+  overlay.className = 'full-screen-overlay recap-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'Match recap');
+  overlay.innerHTML = `<div class="match-recap-modal">
+    <button class="recap-close" type="button" aria-label="Close match recap">×</button>
+    <div class="full-modal-kicker">${esc(recap.groupName || 'GROUP')} · ${esc(recap.stageName || 'STAGE')}${recap.mapName ? ` · ${esc(recap.mapName)}` : ''}</div>
+    <h2>MATCH ${Number(recap.matchNumber) || ''} RECAP</h2>
+    ${recap.winner ? `<div class="recap-champion">🏆 BOOYAH · ${esc(recap.winner)}</div>` : ''}
+    <div class="recap-table-head"><span>PLACE</span><span>TEAM</span><span>KILLS</span><span>PLACE PTS</span><span>MATCH PTS</span></div>
+    <div class="recap-full-list">${recap.teams.map((t, i) => `<div class="recap-full-row ${(t.isWinner || t.position === 1) ? 'recap-first' : ''}">
+      <b>#${Number(t.position) || i + 1}</b><strong>${esc(t.name)}</strong><span>${Number(t.kills) || 0}</span><span>${Number(t.placementPoints) || 0}</span><em>${Number(t.points) || 0}</em>
+    </div>`).join('')}</div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.recap-close').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', (event) => { if (event.target === overlay) overlay.remove(); });
+}
+
 function renderMatchRecap() {
-  const el = document.getElementById('matchRecap');
   const recap = state.lastRecap;
-  if (!recap || !Array.isArray(recap.teams) || !recap.teams.length) {
-    el.innerHTML = '<div class="live-card-title">LAST MATCH RECAP</div><div class="compare-empty">Match results will show here after End Match.</div>';
+  if (!initialStateReceived) {
+    lastRecapSeenAt = recap?.completedAt || null;
     return;
   }
-  const teams = recap.teams;
-  const topTeams = teams.slice(0, 5);
-  el.innerHTML = `<div class="live-card-title">LAST MATCH RECAP</div>
-    <div class="recap-heading">MATCH ${Number(recap.matchNumber) || ''}</div>
-    <div class="recap-winner">${recap.winner ? `🏆 ${esc(recap.winner)}` : 'MATCH COMPLETE'}</div>
-    <div class="recap-subtitle">${esc(recap.groupName || '')} · ${esc(recap.stageName || '')}</div>
-    <div class="recap-list">${topTeams.map((t, i) => `<div class="recap-row ${i === 0 ? 'recap-first' : ''}">
-      <b>#${t.position || i + 1}</b><strong>${esc(t.name)}</strong><span>${Number(t.kills) || 0}K</span><em>${Number(t.points) || 0} PTS</em>
-    </div>`).join('')}</div>
-    ${teams.length > topTeams.length ? `<div class="recap-foot">+ ${teams.length - topTeams.length} more teams</div>` : ''}`;
+  if (!recap?.completedAt || recap.completedAt === lastRecapSeenAt) return;
+  lastRecapSeenAt = recap.completedAt;
+  openMatchRecap(recap);
 }
 
 document.addEventListener('change', (event) => {
   if (event.target?.id === 'compareTeamA' || event.target?.id === 'compareTeamB') renderTeamComparison();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') document.getElementById('matchRecapOverlay')?.remove();
 });
 
 function renderTable() {
@@ -250,39 +296,11 @@ function showBooyah(teamName, winnerId) {
     <button class="booyah-recap-button" type="button">MATCH RECAP</button>
   `;
   document.body.appendChild(overlay);
-  overlay.querySelector('.booyah-recap-button').addEventListener('click', () => showCurrentMatchRecap(overlay));
+  overlay.querySelector('.booyah-recap-button').addEventListener('click', () => openMatchRecap(currentMatchRecap()));
   document.body.classList.add('booyah-active');
   activeBooyahOverlay = overlay;
   spawnConfetti(overlay, 130);
   booyahConfettiTimer = setInterval(() => spawnConfetti(overlay, 46), 2600);
-}
-
-function showCurrentMatchRecap(overlay) {
-  const existing = overlay.querySelector('.booyah-recap-modal');
-  if (existing) {
-    existing.remove();
-    return;
-  }
-  const eliminated = state.teams.filter(t => t.eliminated).length;
-  const rows = state.teams.map(t => ({
-    ...t,
-    recapPosition: t.position || (t.isWinner ? 1 : Math.max(1, state.teams.length - eliminated)),
-    recapPoints: (Number(t.kills) || 0) + (Number(t.livePlacementPts) || 0)
-  })).sort((a, b) => a.recapPosition - b.recapPosition || compareStandings(a, b));
-  const modal = document.createElement('section');
-  modal.className = 'booyah-recap-modal';
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-modal', 'true');
-  modal.setAttribute('aria-label', 'Match recap');
-  modal.innerHTML = `<button class="booyah-recap-close" type="button" aria-label="Close match recap">×</button>
-    <div class="booyah-recap-title">MATCH ${Number(state.matchNumber) || 1} RECAP</div>
-    <div class="booyah-recap-subtitle">${esc(state.groupName || 'Group A')} · ${esc(state.stageName || 'League Stage')}</div>
-    <div class="booyah-recap-columns"><span>POS</span><span>TEAM</span><span>KILLS</span><span>PTS</span></div>
-    <div class="booyah-recap-list">${rows.map(t => `<div class="booyah-recap-row ${t.isWinner ? 'winner-row' : ''}">
-      <b>#${t.recapPosition}</b><strong>${esc(t.name)}</strong><span>${Number(t.kills) || 0}</span><em>${t.recapPoints}</em>
-    </div>`).join('')}</div>`;
-  overlay.appendChild(modal);
-  modal.querySelector('.booyah-recap-close').addEventListener('click', () => modal.remove());
 }
 
 function hideBooyah() {
@@ -326,6 +344,7 @@ socket.on('state', (s) => {
   renderMatchRecap();
   updateBanner();
   checkWinner();
+  initialStateReceived = true;
 });
 
 // Lightweight tick just for the banner's disappearing act.
