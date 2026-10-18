@@ -60,14 +60,22 @@ function saveState() {
 
 function findTeam(id) { return state.teams.find(t => t.id === id); }
 
-function computeTotal(t) {
-  // Total shown live = points already banked from finished matches + this match's live points.
-  let pts = (t.cumPoints || 0) + (t.kills || 0);
-  if (t.position) {
-    const v = state.placementPoints[t.position - 1];
-    pts += (v !== undefined ? v : 1);
-  }
-  return pts;
+function livePlacementPosition(t, eliminatedCount = state.teams.filter(team => team.eliminated).length) {
+  if (t.position) return t.position;
+  if (t.eliminated || eliminatedCount === 0) return null;
+  // Once a team is out, every team still alive is guaranteed at least this place.
+  return Math.max(1, state.teams.length - eliminatedCount);
+}
+
+function pointsForPosition(position) {
+  if (!position) return 0;
+  const points = state.placementPoints[position - 1];
+  return points !== undefined ? points : 1;
+}
+
+function computeTotal(t, eliminatedCount = state.teams.filter(team => team.eliminated).length) {
+  // Replace the provisional floor as it advances; never stack the same placement points twice.
+  return (t.cumPoints || 0) + (t.kills || 0) + pointsForPosition(livePlacementPosition(t, eliminatedCount));
 }
 
 // If only one team remains alive (not eliminated), auto-crown them Booyah / position 1
@@ -99,12 +107,14 @@ function eliminateTeam(team) {
 
 // Banks points from a finished match into cumulative totals, then clears per-match fields.
 function rolloverMatch() {
+  const eliminatedCount = state.teams.filter(t => t.eliminated).length;
   state.teams.forEach(t => {
-    const matchPoints = (t.kills || 0) + (t.position ? (state.placementPoints[t.position - 1] ?? 1) : 0);
+    const finalPosition = livePlacementPosition(t, eliminatedCount);
+    const matchPoints = (t.kills || 0) + pointsForPosition(finalPosition);
     t.cumPoints = (t.cumPoints || 0) + matchPoints;
     t.cumKills = (t.cumKills || 0) + (t.kills || 0);
     if (t.isWinner) t.boyahs = (t.boyahs || 0) + 1;
-    t.lastPosition = t.position || null;
+    t.lastPosition = finalPosition;
     t.matches = (t.matches || 0) + 1;
     t.kills = 0; t.alive = 4; t.eliminated = false; t.position = null; t.isWinner = false;
   });
@@ -112,9 +122,13 @@ function rolloverMatch() {
 }
 
 function stateWithTotals() {
+  const eliminatedCount = state.teams.filter(t => t.eliminated).length;
   return {
     ...state,
-    teams: state.teams.map(t => ({ ...t, total: computeTotal(t) }))
+    teams: state.teams.map(t => {
+      const livePlacementPts = pointsForPosition(livePlacementPosition(t, eliminatedCount));
+      return { ...t, livePlacementPts, total: computeTotal(t, eliminatedCount) };
+    })
   };
 }
 

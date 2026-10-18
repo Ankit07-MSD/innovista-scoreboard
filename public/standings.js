@@ -39,7 +39,7 @@ function render(state) {
     .map(t => {
       const kills = (t.cumKills || 0) + (t.kills || 0); // banked kills + this match's live kills
       const bankedPlacementPts = (t.cumPoints || 0) - (t.cumKills || 0); // placement points from finished matches
-      const livePlacementPts = t.position ? (state.placementPoints[t.position - 1] ?? 1) : 0; // this match, if placed
+      const livePlacementPts = t.livePlacementPts || 0; // includes placement points secured by eliminations this match
       return {
         id: t.id,
         name: t.name,
