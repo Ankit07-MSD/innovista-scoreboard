@@ -31,7 +31,10 @@ function defaultState() {
     lastElim: null,
     stageName: 'League Stage',
     groupName: 'Group A',
-    qualifyCount: 0
+    qualifyCount: 0,
+    matchNumber: 1,
+    lastRecap: null,
+    showTeamComparison: false
   };
 }
 
@@ -42,6 +45,9 @@ if (fs.existsSync(STATE_FILE)) {
 state.stageName = state.stageName || 'League Stage';
 state.groupName = state.groupName || 'Group A';
 state.qualifyCount = Math.max(0, parseInt(state.qualifyCount, 10) || 0);
+state.matchNumber = Math.max(1, parseInt(state.matchNumber, 10) || 1);
+state.lastRecap = state.lastRecap && Array.isArray(state.lastRecap.teams) ? state.lastRecap : null;
+state.showTeamComparison = Boolean(state.showTeamComparison);
 state.placementPoints = state.placementPoints || defaultPlacementPoints(Math.max(12, state.teams.length));
 state.teams.forEach(t => {
   t.championRush = Boolean(t.championRush);
@@ -117,6 +123,23 @@ function eliminateTeam(team) {
 // Banks points from a finished match into cumulative totals, then clears per-match fields.
 function rolloverMatch() {
   const eliminatedCount = state.teams.filter(t => t.eliminated).length;
+  const results = state.teams.map(t => {
+    const position = livePlacementPosition(t, eliminatedCount);
+    const kills = t.kills || 0;
+    const placementPoints = pointsForPosition(position);
+    return {
+      id: t.id, name: t.name, position, kills, placementPoints,
+      points: kills + placementPoints, isWinner: Boolean(t.isWinner)
+    };
+  }).sort((a, b) => (a.position || Number.POSITIVE_INFINITY) - (b.position || Number.POSITIVE_INFINITY));
+  state.lastRecap = {
+    matchNumber: state.matchNumber,
+    stageName: state.stageName,
+    groupName: state.groupName,
+    winner: results.find(t => t.isWinner)?.name || results.find(t => t.position === 1)?.name || null,
+    teams: results,
+    completedAt: Date.now()
+  };
   state.teams.forEach(t => {
     const finalPosition = livePlacementPosition(t, eliminatedCount);
     const matchPoints = (t.kills || 0) + pointsForPosition(finalPosition);
@@ -127,6 +150,7 @@ function rolloverMatch() {
     t.matches = (t.matches || 0) + 1;
     t.kills = 0; t.alive = 4; t.eliminated = false; t.position = null; t.isWinner = false;
   });
+  state.matchNumber += 1;
   state.lastElim = null;
 }
 
@@ -178,6 +202,9 @@ function handleAction(action, payload) {
       state.qualifyCount = Math.max(0, parseInt(payload.qualifyCount, 10) || 0);
       break;
     }
+    case 'setTeamComparison':
+      state.showTeamComparison = Boolean(payload.visible);
+      break;
     case 'toggleChampionRush': {
       const t = findTeam(payload.id);
       if (t) t.championRush = Boolean(payload.value);

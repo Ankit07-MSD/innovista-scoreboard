@@ -42,6 +42,9 @@ function render() {
   if (!state) return;
 
   document.getElementById('adminKey').placeholder = adminKey ? 'Saved in this browser' : 'admin123';
+  const comparisonBtn = document.getElementById('toggleComparisonBtn');
+  comparisonBtn.textContent = state.showTeamComparison ? 'Hide Team Comparison' : 'Show Team Comparison';
+  comparisonBtn.classList.toggle('rush-on', Boolean(state.showTeamComparison));
   setInputValue('stageName', state.stageName || 'League Stage');
   setInputValue('groupName', state.groupName || 'Group A');
   setInputValue('qualifyCount', state.qualifyCount || 0);
@@ -120,6 +123,9 @@ document.getElementById('bulkTeamNames').addEventListener('keydown', (event) => 
 });
 document.getElementById('endMatchBtn').onclick = () => {
   if (confirm('End this match? Points earned so far will be locked in and carried forward. Kills/alive/eliminations reset for the next match.')) sendAction('endMatch', {});
+};
+document.getElementById('toggleComparisonBtn').onclick = () => {
+  sendAction('setTeamComparison', { visible: !state.showTeamComparison });
 };
 document.getElementById('saveMetaBtn').onclick = () => {
   sendAction('updateMatchMeta', {
