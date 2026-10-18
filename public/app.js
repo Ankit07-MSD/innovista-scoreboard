@@ -5,6 +5,7 @@ let activeBooyahOverlay = null;
 let booyahConfettiTimer = null;
 let initialStateReceived = false;
 let lastRecapSeenAt = null;
+let previousHudCounts = null;
 const previousRanks = new Map();
 const previousTotals = new Map();
 const previousEliminations = new Map();
@@ -44,13 +45,21 @@ function renderMatchMeta() {
 
 function renderRoundDetails() {
   const el = document.getElementById('roundDetails');
+  const teamsAlive = state.teams.filter(t => !t.eliminated).length;
+  const playersAlive = state.teams.reduce((sum, t) => sum + (t.eliminated ? 0 : Number(t.alive) || 0), 0);
+  const teamDrop = previousHudCounts ? previousHudCounts.teams - teamsAlive : 0;
+  const playerDrop = previousHudCounts ? previousHudCounts.players - playersAlive : 0;
   el.innerHTML = `
-    <div class="live-card-title">ROUND DETAILS</div>
-    <div class="round-number">MATCH ${Number(state.matchNumber) || 1}</div>
-    <div class="round-meta"><span>STAGE</span><strong>${esc(state.stageName || 'League Stage')}</strong></div>
-    <div class="round-meta"><span>GROUP</span><strong>${esc(state.groupName || 'Group A')}</strong></div>
-    ${state.mapName ? `<div class="round-meta"><span>MAP</span><strong>${esc(state.mapName)}</strong></div>` : ''}
+    <div class="hud-left">
+      <div class="hud-item"><span>MATCH</span><strong>${Number(state.matchNumber) || 1}</strong></div>
+      <div class="hud-item hud-map"><span>MAP</span><strong>${esc(state.mapName || '—')}</strong></div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-stat ${teamDrop > 0 ? 'hud-stat-drop' : ''}"><strong>${teamsAlive}</strong><span>TEAMS ALIVE</span>${teamDrop > 0 ? `<i>−${teamDrop}</i>` : ''}</div>
+      <div class="hud-stat ${playerDrop > 0 ? 'hud-stat-drop' : ''}"><strong>${playersAlive}</strong><span>PLAYERS ALIVE</span>${playerDrop > 0 ? `<i>−${playerDrop}</i>` : ''}</div>
+    </div>
   `;
+  previousHudCounts = { teams: teamsAlive, players: playersAlive };
 }
 
 function renderTeamComparison() {
