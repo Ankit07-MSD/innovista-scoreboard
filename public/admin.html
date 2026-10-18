@@ -6,7 +6,7 @@
 <title>INNOVISTA Admin Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=elim-feedback-6">
+<link rel="stylesheet" href="style.css?v=bulk-teams-1">
 </head>
 <body>
 <div id="bgfx3d" aria-hidden="true"></div>
@@ -37,6 +37,12 @@
     <button id="endMatchBtn" style="border-color:var(--gold);color:var(--gold)">End Match →Next</button>
   </div>
 
+  <div class="bulkTeamEntry">
+    <label for="bulkTeamNames">ADD MULTIPLE TEAMS <span>one team name per line</span></label>
+    <textarea id="bulkTeamNames" rows="5" placeholder="Team Alpha&#10;Team Bravo&#10;Team Charlie"></textarea>
+    <button id="addTeamsBtn">Add Teams From List</button>
+  </div>
+
   <div id="teams"></div>
 
   <div class="ppPanel">
@@ -49,7 +55,7 @@
   <div id="status" class="statusMsg"></div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="admin.js"></script>
+<script src="admin.js?v=bulk-teams-1"></script>
 <script src="arena-loader.js"></script>
 </body>
 </html>

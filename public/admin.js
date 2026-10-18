@@ -18,7 +18,7 @@ function setInputValue(id, value) {
   if (document.activeElement !== input) input.value = value || '';
 }
 
-function sendAction(action, payload) {
+function sendAction(action, payload, onSuccess) {
   const keyInput = document.getElementById('adminKey');
   adminKey = keyInput.value || adminKey;
   localStorage.setItem('innovista_admin_key', adminKey);
@@ -32,7 +32,8 @@ function sendAction(action, payload) {
     } else if (res && res.error) {
       statusEl.textContent = 'Error: ' + res.error;
     } else {
-      statusEl.textContent = '';
+      if (onSuccess) onSuccess(res);
+      else statusEl.textContent = '';
     }
   });
 }
@@ -106,6 +107,22 @@ document.getElementById('addBtn').onclick = () => {
   const v = inp.value.trim();
   if (v) { sendAction('addTeam', { name: v }); inp.value = ''; }
 };
+document.getElementById('addTeamsBtn').onclick = () => {
+  const textarea = document.getElementById('bulkTeamNames');
+  const names = textarea.value.split(/\r?\n/).map(name => name.trim()).filter(Boolean);
+  const statusEl = document.getElementById('status');
+  if (!names.length) {
+    statusEl.textContent = 'Enter one team name per line.';
+    return;
+  }
+  sendAction('addTeams', { names }, () => {
+    textarea.value = '';
+    statusEl.textContent = `${names.length} team${names.length === 1 ? '' : 's'} added.`;
+  });
+};
+document.getElementById('bulkTeamNames').addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) document.getElementById('addTeamsBtn').click();
+});
 document.getElementById('endMatchBtn').onclick = () => {
   if (confirm('End this match? Points earned so far will be locked in and carried forward. Kills/alive/eliminations reset for the next match.')) sendAction('endMatch', {});
 };

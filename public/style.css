@@ -198,6 +198,12 @@ body.booyah-active{overflow:hidden;}
 .metaPanel input{min-width:0;padding:10px;border-radius:6px;border:1px solid rgba(33,246,255,.22);background:rgba(3,8,13,.9);color:var(--text);font-size:15px;}
 .addTeam{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
 .addTeam input{flex:1;min-width:160px;padding:10px;border-radius:6px;border:1px solid rgba(33,246,255,.22);background:rgba(3,8,13,.9);color:var(--text);font-size:15px;}
+.bulkTeamEntry{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:end;margin:0 0 18px;padding:14px;border:1px solid rgba(33,246,255,.2);border-radius:8px;background:rgba(9,15,24,.68);}
+.bulkTeamEntry label{grid-column:1/-1;color:var(--gold);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;}
+.bulkTeamEntry label span{margin-left:8px;color:var(--muted);font:600 12px 'Rajdhani',sans-serif;letter-spacing:0;text-transform:none;}
+.bulkTeamEntry textarea{width:100%;min-height:116px;resize:vertical;padding:10px;border-radius:6px;border:1px solid rgba(33,246,255,.22);background:rgba(3,8,13,.9);color:var(--text);font:600 15px 'Rajdhani',sans-serif;line-height:1.5;}
+.bulkTeamEntry textarea:focus{outline:1px solid var(--cyan);box-shadow:0 0 14px rgba(33,246,255,.16);}
+.bulkTeamEntry button{min-height:42px;}
 button{cursor:pointer;border:1px solid rgba(33,246,255,.48);background:linear-gradient(180deg,rgba(12,39,48,.95),rgba(8,20,30,.95));color:var(--cyan);padding:8px 12px;
   border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;box-shadow:0 0 12px rgba(33,246,255,.08);transition:transform .2s,box-shadow .2s,background .2s;}
 button:hover{background:linear-gradient(180deg,rgba(255,106,26,.22),rgba(14,30,38,.95));box-shadow:0 0 18px rgba(255,106,26,.18);transform:translateY(-1px);}
@@ -222,6 +228,8 @@ button.rush-on{border-color:var(--gold);color:#230000;background:linear-gradient
 @keyframes creditUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
 @media (max-width:640px){
+  .bulkTeamEntry{grid-template-columns:1fr;}
+  .bulkTeamEntry label{grid-column:auto;}
   .wrap{padding:22px 10px 36px;}
   .match-strip{gap:8px;justify-content:space-between;}
   .meta-chip{flex-direction:column;gap:0;}

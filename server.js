@@ -60,6 +60,15 @@ function saveState() {
 
 function findTeam(id) { return state.teams.find(t => t.id === id); }
 
+function createTeam(name) {
+  return {
+    id: 't' + Date.now() + Math.random().toString(36).slice(2, 6),
+    name, alive: 4, kills: 0, eliminated: false, position: null, isWinner: false,
+    // cumulative tournament-wide stats, carried across matches
+    cumPoints: 0, cumKills: 0, boyahs: 0, matches: 0, championRush: false, lastPosition: null
+  };
+}
+
 function livePlacementPosition(t, eliminatedCount = state.teams.filter(team => team.eliminated).length) {
   if (t.position) return t.position;
   if (t.eliminated || eliminatedCount === 0) return null;
@@ -142,12 +151,16 @@ function handleAction(action, payload) {
     case 'addTeam': {
       const name = (payload.name || '').trim();
       if (!name) throw new Error('Team name required');
-      state.teams.push({
-        id: 't' + Date.now() + Math.random().toString(36).slice(2, 6),
-        name, alive: 4, kills: 0, eliminated: false, position: null, isWinner: false,
-        // cumulative tournament-wide stats, carried across matches
-        cumPoints: 0, cumKills: 0, boyahs: 0, matches: 0, championRush: false
-      });
+      state.teams.push(createTeam(name));
+      while (state.placementPoints.length < state.teams.length) state.placementPoints.push(1);
+      break;
+    }
+    case 'addTeams': {
+      const names = (Array.isArray(payload.names) ? payload.names : String(payload.names || '').split(/\r?\n/))
+        .map(name => String(name || '').trim())
+        .filter(Boolean);
+      if (!names.length) throw new Error('Enter one team name per line.');
+      names.forEach(name => state.teams.push(createTeam(name)));
       while (state.placementPoints.length < state.teams.length) state.placementPoints.push(1);
       break;
     }
