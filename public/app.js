@@ -6,6 +6,7 @@ let booyahConfettiTimer = null;
 let initialStateReceived = false;
 let lastRecapSeenAt = null;
 let lastZoneEventId = null;
+let zoneClosingAudio = null;
 let previousHudCounts = null;
 const previousRanks = new Map();
 const previousTotals = new Map();
@@ -164,8 +165,32 @@ function renderMatchRecap() {
   openMatchRecap(recap);
 }
 
+function primeZoneClosingAudio() {
+  if (!zoneClosingAudio) {
+    zoneClosingAudio = new Audio('/zone-closing.webm');
+    zoneClosingAudio.preload = 'none';
+  }
+  zoneClosingAudio.muted = true;
+  zoneClosingAudio.play().then(() => {
+    zoneClosingAudio.pause();
+    zoneClosingAudio.currentTime = 0;
+    zoneClosingAudio.muted = false;
+  }).catch(() => {
+    zoneClosingAudio.muted = false;
+  });
+}
+
+document.addEventListener('pointerdown', primeZoneClosingAudio, { once: true, passive: true });
+
 function showZoneClosing() {
   document.querySelector('.zone-closing-overlay')?.remove();
+  if (!zoneClosingAudio) {
+    zoneClosingAudio = new Audio('/zone-closing.webm');
+    zoneClosingAudio.preload = 'none';
+  }
+  zoneClosingAudio.pause();
+  zoneClosingAudio.currentTime = 0;
+  zoneClosingAudio.play().catch(() => {});
   const overlay = document.createElement('div');
   overlay.className = 'zone-closing-overlay';
   overlay.setAttribute('aria-hidden', 'true');
