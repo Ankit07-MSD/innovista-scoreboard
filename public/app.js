@@ -5,6 +5,7 @@ let activeBooyahOverlay = null;
 let booyahConfettiTimer = null;
 let initialStateReceived = false;
 let lastRecapSeenAt = null;
+let lastZoneEventId = null;
 let previousHudCounts = null;
 const previousRanks = new Map();
 const previousTotals = new Map();
@@ -161,6 +162,35 @@ function renderMatchRecap() {
   if (!recap?.completedAt || recap.completedAt === lastRecapSeenAt) return;
   lastRecapSeenAt = recap.completedAt;
   openMatchRecap(recap);
+}
+
+function showZoneClosing() {
+  document.querySelector('.zone-closing-overlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'zone-closing-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.innerHTML = `<div class="zone-ring"></div>
+    <div class="zone-warning-card">
+      <span class="zone-warning-kicker">SAFE ZONE ALERT</span>
+      <strong>ZONE CLOSING</strong>
+      <span class="zone-warning-sub">MOVE TO THE SAFE ZONE</span>
+      <i class="zone-warning-progress"></i>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 7200);
+}
+
+function checkZoneClosing() {
+  const event = state?.zoneClosingEvent;
+  if (!event) return;
+  if (!initialStateReceived) {
+    lastZoneEventId = event.id;
+    return;
+  }
+  if (event.id !== lastZoneEventId) {
+    lastZoneEventId = event.id;
+    showZoneClosing();
+  }
 }
 
 document.addEventListener('change', (event) => {
@@ -351,6 +381,7 @@ socket.on('state', (s) => {
   renderRoundDetails();
   renderTeamComparison();
   renderMatchRecap();
+  checkZoneClosing();
   updateBanner();
   checkWinner();
   initialStateReceived = true;

@@ -128,6 +128,11 @@ document.getElementById('endMatchBtn').onclick = () => {
 document.getElementById('toggleComparisonBtn').onclick = () => {
   sendAction('setTeamComparison', { visible: !state.showTeamComparison });
 };
+document.getElementById('zoneClosingBtn').onclick = () => {
+  sendAction('triggerZoneClosing', {}, () => {
+    document.getElementById('status').textContent = 'Zone closing effect triggered on the live display.';
+  });
+};
 document.getElementById('saveMetaBtn').onclick = () => {
   sendAction('updateMatchMeta', {
     stageName: document.getElementById('stageName').value,

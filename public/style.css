@@ -213,6 +213,27 @@ body.booyah-active{overflow:hidden;}
   animation:plateIn .65s cubic-bezier(.16,1.45,.3,1) .78s both;}
 .booyah-recap-button{position:absolute;top:24vh;right:clamp(14px,4vw,60px);z-index:8;padding:10px 16px;border:1px solid var(--gold);border-radius:4px;background:rgba(20,4,2,.9);color:var(--gold);font:700 11px 'Orbitron',sans-serif;letter-spacing:1px;box-shadow:0 0 18px rgba(255,210,87,.3);}
 .booyah-recap-button:hover{background:rgba(120,0,0,.96);color:#fff;}
+.zone-closing-overlay{position:fixed;inset:0;z-index:9000;overflow:hidden;display:grid;place-items:center;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(6,10,14,.08) 0 24%,rgba(140,7,0,.24) 62%,rgba(7,0,0,.62));animation:zoneOverlayIn .35s ease both;}
+.zone-closing-overlay::before{content:'';position:absolute;inset:0;background:linear-gradient(112deg,transparent 0 18%,rgba(255,42,20,.22) 18.3% 19%,transparent 19.4% 81%,rgba(22,241,255,.18) 81.3% 82%,transparent 82.4%);animation:zoneLightSweep 1.15s ease-in-out 4;}
+.zone-ring{position:absolute;left:50%;top:50%;width:145vmax;height:145vmax;border:clamp(7px,1.1vw,17px) solid rgba(33,230,255,.72);border-radius:50%;
+  box-shadow:inset 0 0 36px rgba(255,44,24,.35),0 0 26px rgba(33,230,255,.56),0 0 70px rgba(255,34,18,.34);
+  transform:translate(-50%,-50%) scale(1);animation:zoneRingShrink 6.6s cubic-bezier(.18,.62,.35,1) both;}
+.zone-ring::after{content:'';position:absolute;inset:5%;border:2px dashed rgba(255,208,87,.66);border-radius:50%;animation:zoneRingRotate 12s linear infinite;}
+.zone-warning-card{position:absolute;left:50%;top:18%;width:min(700px,90vw);display:grid;justify-items:center;gap:5px;padding:17px 24px 15px;
+  border:2px solid rgba(255,226,123,.88);border-radius:8px;background:linear-gradient(100deg,rgba(53,4,1,.96),rgba(152,15,3,.94) 50%,rgba(41,3,1,.96));
+  box-shadow:0 0 25px rgba(255,40,20,.65),0 0 45px rgba(255,210,87,.22);text-align:center;transform:translateX(-50%);animation:zoneCardIn .55s cubic-bezier(.16,1.4,.3,1) both;}
+.zone-warning-kicker{color:#ffe49d;font:700 clamp(10px,1.3vw,15px) 'Orbitron',sans-serif;letter-spacing:clamp(2px,.5vw,6px);}
+.zone-warning-card strong{color:#fff4bd;font:900 clamp(28px,6vw,70px) 'Orbitron',sans-serif;letter-spacing:clamp(1px,.4vw,5px);text-shadow:0 4px 0 #6b0900,0 0 24px rgba(255,210,87,.6);}
+.zone-warning-sub{color:#fff;font:800 clamp(10px,1.5vw,17px) 'Orbitron',sans-serif;letter-spacing:clamp(1px,.4vw,5px);}
+.zone-warning-progress{width:100%;height:4px;margin-top:8px;background:rgba(255,245,176,.22);}
+.zone-warning-progress::after{content:'';display:block;width:100%;height:100%;background:linear-gradient(90deg,#fff4a0,#ff4d29);transform-origin:left;animation:zoneProgress 6.6s linear both;}
+@keyframes zoneOverlayIn{from{opacity:0;}to{opacity:1;}}
+@keyframes zoneRingShrink{0%{opacity:0;transform:translate(-50%,-50%) scale(1.3);}12%{opacity:1;}85%{opacity:.82;}100%{opacity:0;transform:translate(-50%,-50%) scale(.12);}}
+@keyframes zoneRingRotate{to{transform:rotate(360deg);}}
+@keyframes zoneLightSweep{0%,100%{opacity:.3;transform:translateX(-3%);}50%{opacity:.85;transform:translateX(3%);}}
+@keyframes zoneCardIn{from{opacity:0;filter:blur(5px);transform:translate(-50%,-24px) scale(.94);}to{opacity:1;filter:blur(0);transform:translate(-50%,0) scale(1);}}
+@keyframes zoneProgress{to{transform:scaleX(0);}}
 .full-screen-overlay{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:clamp(12px,3vw,44px);
   background:radial-gradient(ellipse at 50% 25%,rgba(116,24,0,.84),rgba(10,2,2,.97) 68%);backdrop-filter:blur(8px);animation:overlayIn .28s ease both;}
 .team-compare-modal,.match-recap-modal{position:relative;width:min(100%,1080px);max-height:90vh;overflow:hidden;padding:clamp(20px,4vw,52px);

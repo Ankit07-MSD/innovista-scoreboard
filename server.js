@@ -35,7 +35,8 @@ function defaultState() {
     qualifyCount: 0,
     matchNumber: 1,
     lastRecap: null,
-    showTeamComparison: false
+    showTeamComparison: false,
+    zoneClosingEvent: null
   };
 }
 
@@ -50,6 +51,7 @@ state.qualifyCount = Math.max(0, parseInt(state.qualifyCount, 10) || 0);
 state.matchNumber = Math.max(1, parseInt(state.matchNumber, 10) || 1);
 state.lastRecap = state.lastRecap && Array.isArray(state.lastRecap.teams) ? state.lastRecap : null;
 state.showTeamComparison = Boolean(state.showTeamComparison);
+state.zoneClosingEvent = state.zoneClosingEvent && Number.isFinite(Number(state.zoneClosingEvent.id)) ? state.zoneClosingEvent : null;
 state.placementPoints = state.placementPoints || defaultPlacementPoints(Math.max(12, state.teams.length));
 state.teams.forEach(t => {
   t.championRush = Boolean(t.championRush);
@@ -209,6 +211,9 @@ function handleAction(action, payload) {
     }
     case 'setTeamComparison':
       state.showTeamComparison = Boolean(payload.visible);
+      break;
+    case 'triggerZoneClosing':
+      state.zoneClosingEvent = { id: Date.now() + Math.floor(Math.random() * 1000), ts: Date.now() };
       break;
     case 'toggleChampionRush': {
       const t = findTeam(payload.id);
