@@ -102,11 +102,6 @@ function render() {
   });
 }
 
-document.getElementById('addBtn').onclick = () => {
-  const inp = document.getElementById('newTeamName');
-  const v = inp.value.trim();
-  if (v) { sendAction('addTeam', { name: v }); inp.value = ''; }
-};
 document.getElementById('addTeamsBtn').onclick = () => {
   const textarea = document.getElementById('bulkTeamNames');
   const names = textarea.value.split(/\r?\n/).map(name => name.trim()).filter(Boolean);
