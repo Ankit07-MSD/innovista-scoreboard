@@ -91,12 +91,6 @@ body::after{z-index:0;inset:-2%;opacity:.72;
 .killfeed-corner-tl{top:5px;left:5px;border-width:2px 0 0 2px;}.killfeed-corner-tr{top:5px;right:5px;border-width:2px 2px 0 0;}
 .killfeed-corner-bl{bottom:5px;left:5px;border-width:0 0 2px 2px;}.killfeed-corner-br{bottom:5px;right:5px;border-width:0 2px 2px 0;}
 .killfeed-footer{margin-top:10px;color:rgba(255,220,162,.72);font:700 8px 'Orbitron',sans-serif;letter-spacing:1px;}
-.obs-mode{background:transparent!important;}
-.obs-mode::before,.obs-mode::after{opacity:0!important;}
-.obs-mode .wrap::before{display:none!important;}
-.obs-mode #bgfx3d{opacity:0!important;}
-.obs-mode .killfeed-viewport{background:transparent;border-color:transparent;box-shadow:none;}
-.obs-mode .killfeed-placeholder{visibility:hidden;}
 .live-sidebar{position:fixed;top:16px;left:18px;right:18px;z-index:50;width:auto;pointer-events:none;}
 .live-card{display:contents;}
 .hud-left,.hud-right{position:absolute;top:0;display:flex;align-items:stretch;gap:10px;}
