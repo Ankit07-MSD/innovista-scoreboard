@@ -1,4 +1,5 @@
 const socket = io();
+if (new URLSearchParams(location.search).has('obs')) document.body.classList.add('obs-mode');
 let state = null;
 let winnerShownFor = null;
 let activeBooyahOverlay = null;

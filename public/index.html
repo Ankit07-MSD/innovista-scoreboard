@@ -6,7 +6,7 @@
 <title>INNOVISTA Live Standings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=zone-closing-1">
+<link rel="stylesheet" href="style.css?v=obs-killfeed-1">
 </head>
 <body>
 <div id="bgfx3d" aria-hidden="true"></div>
@@ -18,6 +18,26 @@
     <section class="live-card" id="roundDetails"></section>
   </aside>
   <div class="live-layout">
+    <aside class="killfeed-panel" aria-label="OBS kill feed video area">
+      <div class="killfeed-shell">
+        <div class="killfeed-heading">
+          <div><span class="killfeed-kicker">LIVE GAME FEED</span><h2>KILL FEED</h2></div>
+          <span class="killfeed-live"><i></i> OBS INPUT</span>
+        </div>
+        <div class="killfeed-viewport" id="obsKillFeedViewport">
+          <div class="killfeed-placeholder">
+            <span class="killfeed-crosshair" aria-hidden="true">✛</span>
+            <strong>GAME FEED AREA</strong>
+            <span>Place the cropped OBS Game Capture here</span>
+          </div>
+          <span class="killfeed-corner killfeed-corner-tl"></span>
+          <span class="killfeed-corner killfeed-corner-tr"></span>
+          <span class="killfeed-corner killfeed-corner-bl"></span>
+          <span class="killfeed-corner killfeed-corner-br"></span>
+        </div>
+        <div class="killfeed-footer"><span>ELIMINATION CAM</span><span>INNOVISTA LIVE</span></div>
+      </div>
+    </aside>
     <div class="table" id="table"></div>
   </div>
   <div class="credit">
@@ -27,7 +47,7 @@
   </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="app.js?v=booyah-audio-1"></script>
+<script src="app.js?v=obs-killfeed-1"></script>
 <script src="arena-loader.js"></script>
 </body>
 </html>
