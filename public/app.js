@@ -3,6 +3,7 @@ let state = null;
 let winnerShownFor = null;
 let activeBooyahOverlay = null;
 let booyahConfettiTimer = null;
+let booyahAudio = null;
 let initialStateReceived = false;
 let lastRecapSeenAt = null;
 let lastZoneEventId = null;
@@ -340,6 +341,14 @@ function showBooyah(teamName, winnerId) {
   document.body.appendChild(flash);
   setTimeout(() => flash.remove(), 400);
 
+  if (!booyahAudio) {
+    booyahAudio = new Audio('/booyah.mp3');
+    booyahAudio.preload = 'auto';
+  }
+  booyahAudio.pause();
+  booyahAudio.currentTime = 0;
+  booyahAudio.play().catch(() => {});
+
   const overlay = document.createElement('div');
   overlay.className = 'booyah-overlay';
   overlay.dataset.winnerId = winnerId;
@@ -366,6 +375,23 @@ function showBooyah(teamName, winnerId) {
   spawnConfetti(overlay, 130);
   booyahConfettiTimer = setInterval(() => spawnConfetti(overlay, 46), 2600);
 }
+
+function primeBooyahAudio() {
+  if (!booyahAudio) {
+    booyahAudio = new Audio('/booyah.mp3');
+    booyahAudio.preload = 'auto';
+  }
+  booyahAudio.muted = true;
+  booyahAudio.play().then(() => {
+    booyahAudio.pause();
+    booyahAudio.currentTime = 0;
+    booyahAudio.muted = false;
+  }).catch(() => {
+    booyahAudio.muted = false;
+  });
+}
+
+document.addEventListener('pointerdown', primeBooyahAudio, { once: true, passive: true });
 
 function hideBooyah() {
   if (booyahConfettiTimer) {
