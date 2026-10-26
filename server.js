@@ -216,9 +216,13 @@ function handleAction(action, payload) {
       if (value) {
         let url;
         try { url = new URL(value); } catch { throw new Error('Paste the Cloudflare Stream live player embed URL.'); }
-        if (url.protocol !== 'https:' || !/^customer-[a-z0-9-]+\.cloudflarestream\.com$/i.test(url.hostname)
-          || !/^\/[a-z0-9]{32}\/iframe$/i.test(url.pathname) || url.search || url.hash) {
-          throw new Error('Use the Cloudflare Stream live input iframe URL from its Embed tab.');
+        const cloudflarePlayer = /^customer-[a-z0-9-]+\.cloudflarestream\.com$/i.test(url.hostname)
+          && /^\/[a-z0-9]{32}\/iframe$/i.test(url.pathname) && !url.search && !url.hash;
+        const vdoNinjaViewer = /^(?:www\.)?vdo\.ninja$/i.test(url.hostname)
+          && url.pathname === '/' && /^[a-z0-9_-]{3,128}$/i.test(url.searchParams.get('view') || '')
+          && !url.searchParams.has('push') && !url.searchParams.has('room') && !url.searchParams.has('scene') && !url.hash;
+        if (url.protocol !== 'https:' || (!cloudflarePlayer && !vdoNinjaViewer)) {
+          throw new Error('Paste a Cloudflare Stream embed URL or a VDO.Ninja viewer link (https://vdo.ninja/?view=...).');
         }
       }
       state.killFeedPlayerUrl = value;

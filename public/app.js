@@ -52,11 +52,20 @@ function renderKillFeedPlayer() {
   const player = document.createElement('iframe');
   player.className = 'killfeed-player';
   player.dataset.embedUrl = url;
-  player.src = `${url}?autoplay=true&muted=true&controls=true&letterboxColor=transparent`;
+  const playerUrl = new URL(url);
+  if (/^(?:www\.)?vdo\.ninja$/i.test(playerUrl.hostname)) {
+    playerUrl.searchParams.set('cleanoutput', '');
+  } else {
+    playerUrl.searchParams.set('autoplay', 'true');
+    playerUrl.searchParams.set('muted', 'true');
+    playerUrl.searchParams.set('controls', 'true');
+    playerUrl.searchParams.set('letterboxColor', 'transparent');
+  }
+  player.src = playerUrl.toString();
   player.title = 'Live game kill feed';
   player.allow = 'autoplay; encrypted-media; picture-in-picture';
   player.allowFullscreen = true;
-  player.loading = 'lazy';
+  player.loading = 'eager';
   viewport.prepend(player);
 }
 
