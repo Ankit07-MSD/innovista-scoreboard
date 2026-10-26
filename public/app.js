@@ -35,6 +35,31 @@ function pipHtml(alive) {
   return h;
 }
 
+function renderKillFeedPlayer() {
+  const viewport = document.getElementById('obsKillFeedViewport');
+  if (!viewport) return;
+  const url = state.killFeedPlayerUrl || '';
+  const existing = viewport.querySelector('iframe.killfeed-player');
+  if (!url) {
+    existing?.remove();
+    document.getElementById('killFeedPlaceholder')?.removeAttribute('hidden');
+    return;
+  }
+  if (existing?.dataset.embedUrl === url) return;
+  existing?.remove();
+  const placeholder = document.getElementById('killFeedPlaceholder');
+  if (placeholder) placeholder.hidden = true;
+  const player = document.createElement('iframe');
+  player.className = 'killfeed-player';
+  player.dataset.embedUrl = url;
+  player.src = `${url}?autoplay=true&muted=true&controls=true&letterboxColor=transparent`;
+  player.title = 'Live game kill feed';
+  player.allow = 'autoplay; encrypted-media; picture-in-picture';
+  player.allowFullscreen = true;
+  player.loading = 'lazy';
+  viewport.prepend(player);
+}
+
 function renderMatchMeta() {
   const el = document.getElementById('matchMeta');
   const stage = (state.stageName || 'League Stage').toUpperCase();
@@ -427,6 +452,7 @@ function checkWinner() {
 
 socket.on('state', (s) => {
   state = s;
+  renderKillFeedPlayer();
   renderMatchMeta();
   renderTable();
   renderRoundDetails();

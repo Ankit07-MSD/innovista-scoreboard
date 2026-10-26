@@ -6,7 +6,7 @@
 <title>INNOVISTA Admin Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=zone-closing-1">
+<link rel="stylesheet" href="style.css?v=direct-killfeed-1">
 </head>
 <body>
 <div id="bgfx3d" aria-hidden="true"></div>
@@ -34,6 +34,12 @@
     <button id="saveMetaBtn">Update Match Header</button>
   </div>
 
+  <div class="killfeed-source-panel">
+    <label for="killFeedPlayerUrl">LIVE KILL FEED PLAYER URL <span>Paste the Cloudflare Stream live input iframe URL. Keep the OBS publish URL private.</span></label>
+    <input id="killFeedPlayerUrl" type="url" placeholder="https://customer-….cloudflarestream.com/INPUT_ID/iframe" autocomplete="off">
+    <button id="saveKillFeedUrlBtn" type="button">Save Kill Feed Player</button>
+  </div>
+
   <div class="addTeam">
     <button id="endMatchBtn" style="border-color:var(--gold);color:var(--gold)">End Match →Next</button>
     <button id="toggleComparisonBtn" type="button">Show Team Comparison</button>
@@ -58,7 +64,7 @@
   <div id="status" class="statusMsg"></div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="admin.js?v=zone-closing-1"></script>
+<script src="admin.js?v=direct-killfeed-1"></script>
 <script src="arena-loader.js"></script>
 </body>
 </html>

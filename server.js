@@ -32,6 +32,7 @@ function defaultState() {
     stageName: 'League Stage',
     groupName: 'Group A',
     mapName: '',
+    killFeedPlayerUrl: '',
     qualifyCount: 0,
     matchNumber: 1,
     lastRecap: null,
@@ -47,6 +48,7 @@ if (fs.existsSync(STATE_FILE)) {
 state.stageName = state.stageName || 'League Stage';
 state.groupName = state.groupName || 'Group A';
 state.mapName = String(state.mapName || '');
+state.killFeedPlayerUrl = String(state.killFeedPlayerUrl || '');
 state.qualifyCount = Math.max(0, parseInt(state.qualifyCount, 10) || 0);
 state.matchNumber = Math.max(1, parseInt(state.matchNumber, 10) || 1);
 state.lastRecap = state.lastRecap && Array.isArray(state.lastRecap.teams) ? state.lastRecap : null;
@@ -207,6 +209,19 @@ function handleAction(action, payload) {
       state.groupName = String(payload.groupName || '').trim() || 'Group A';
       state.mapName = String(payload.mapName || '').trim();
       state.qualifyCount = Math.max(0, parseInt(payload.qualifyCount, 10) || 0);
+      break;
+    }
+    case 'updateKillFeedPlayer': {
+      const value = String(payload.url || '').trim();
+      if (value) {
+        let url;
+        try { url = new URL(value); } catch { throw new Error('Paste the Cloudflare Stream live player embed URL.'); }
+        if (url.protocol !== 'https:' || !/^customer-[a-z0-9-]+\.cloudflarestream\.com$/i.test(url.hostname)
+          || !/^\/[a-z0-9]{32}\/iframe$/i.test(url.pathname) || url.search || url.hash) {
+          throw new Error('Use the Cloudflare Stream live input iframe URL from its Embed tab.');
+        }
+      }
+      state.killFeedPlayerUrl = value;
       break;
     }
     case 'setTeamComparison':

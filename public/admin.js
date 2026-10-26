@@ -49,6 +49,7 @@ function render() {
   setInputValue('groupName', state.groupName || 'Group A');
   setInputValue('mapName', state.mapName || '');
   setInputValue('qualifyCount', state.qualifyCount || 0);
+  setInputValue('killFeedPlayerUrl', state.killFeedPlayerUrl || '');
 
   const winner = state.teams.find(t => t.isWinner);
   const noticeEl = document.getElementById('matchNotice');
@@ -139,6 +140,11 @@ document.getElementById('saveMetaBtn').onclick = () => {
     groupName: document.getElementById('groupName').value,
     mapName: document.getElementById('mapName').value,
     qualifyCount: document.getElementById('qualifyCount').value
+  });
+};
+document.getElementById('saveKillFeedUrlBtn').onclick = () => {
+  sendAction('updateKillFeedPlayer', { url: document.getElementById('killFeedPlayerUrl').value }, () => {
+    document.getElementById('status').textContent = 'Live kill feed player URL saved.';
   });
 };
 document.getElementById('adminKey').addEventListener('change', (event) => {
