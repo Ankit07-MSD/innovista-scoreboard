@@ -38,6 +38,8 @@ function pipHtml(alive) {
 function renderKillFeedPlayer() {
   const viewport = document.getElementById('obsKillFeedViewport');
   if (!viewport) return;
+  const panel = viewport.closest('.killfeed-panel');
+  if (panel && getComputedStyle(panel).display === 'none') return;
   const url = state.killFeedPlayerUrl || '';
   const existing = viewport.querySelector('iframe.killfeed-player');
   if (!url) {
